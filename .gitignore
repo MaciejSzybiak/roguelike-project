@@ -22,6 +22,11 @@ bld/
 [Oo]bj/
 [Ll]og/
 
+# Linux build results
+linux_build/
+*.o
+*.d
+
 # Visual Studio 2015 cache/options directory
 .vs/
 # Uncomment if you have tasks that create the project's static files in wwwroot
@@ -259,3 +264,6 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+
+# GIMP image files
+*.xcf

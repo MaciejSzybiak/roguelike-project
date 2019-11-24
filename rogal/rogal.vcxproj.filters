@@ -14,4 +14,158 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="source\render\window.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\render\camera.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\game\game.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\render\renderer.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\logging.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\render\textures.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\game\sprites.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\physics\raycast.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ui\ui.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\game\player.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\game\map.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\game\objects.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\game\mobs.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\game\text.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\game\visibility.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\game\items.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\physics\particles.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\main.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="headers\shared.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\render\renderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\render\textures.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\stb_image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\ui.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\player.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\game.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\text.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\window.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\particles.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\raycast.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\textures\anim1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\textures\rock.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\textures\wall.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\textures\menu_btns.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\textures\door.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\textures\player_b.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\textures\player_l.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\textures\player_r.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\textures\rock2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\textures\wall2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\textures\water1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\textures\slime_b.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\textures\locked_door.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\textures\slime_l.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\textures\slime_r.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\textures\sword.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\textures\fist.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\textures\font.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Makefile" />
+    <None Include="freeglut.dll" />
+  </ItemGroup>
 </Project>
