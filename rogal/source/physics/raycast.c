@@ -34,7 +34,7 @@ void mouse_to_world_coordinates(int x, int y) {
 
 	GLint viewport[4];
 	mat4_t modelview_mat, projection_mat;
-	GLfloat wx, wy, wz;
+	GLfloat wx, wy;
 	GLdouble out_x, out_y, out_z;
 
 	Vec2Zero(mouse_world_pos);
@@ -49,10 +49,9 @@ void mouse_to_world_coordinates(int x, int y) {
 	//get transformation matrices and depth
 	glGetDoublev(GL_MODELVIEW_MATRIX, modelview_mat);
 	glGetDoublev(GL_PROJECTION_MATRIX, projection_mat);
-	glReadPixels(x, y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &wz); //TODO: is the depth needed if there's no depth buffer?
 
 	//unproject screen position to world position
-	gluUnProject(wx, wy, wz, modelview_mat, projection_mat, viewport, &out_x, &out_y, &out_z);
+	gluUnProject(wx, wy, 0, modelview_mat, projection_mat, viewport, &out_x, &out_y, &out_z);
 
 	//copy output values into the vector
 	mouse_world_pos[VEC_X] = (vec_t)out_x;
