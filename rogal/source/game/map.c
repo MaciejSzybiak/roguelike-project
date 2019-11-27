@@ -569,7 +569,8 @@ void flood_fill_water(int x, int y) {
 		x0 = x + (i % 2) * (i > 1 ? 1 : -1);
 		y0 = y + (!(i % 2)) * (i > 1 ? 1 : -1);
 
-		if (map[x0][y0] != TILE_WATER && !has_neighbor_of_type(x0, y0, TILE_WALL) && !has_neighbor_of_type(x0, y0, TILE_DOOR) &&
+		if (map[x0][y0] != TILE_WATER && !has_neighbor_of_type(x0, y0, TILE_WALL) && !has_neighbor_of_type(x0, y0, TILE_DOOR) && 
+			!has_neighbor_of_type(x, y, TILE_LOCK_DOOR) && !has_neighbor_of_type(x, y, TILE_CHEST) &&
 			x0 != MAP_OFFSET && y0 != MAP_OFFSET && RandomBool) {
 
 			flood_fill_water(x0, y0);
@@ -594,6 +595,7 @@ restart:
 
 				if (current == skip && map[x][y] == TILE_FLOOR && 
 					!has_neighbor_of_type(x, y, TILE_WALL) && !has_neighbor_of_type(x, y, TILE_DOOR) && !has_neighbor_of_type(x, y, TILE_WATER) && !has_neighbor_of_type(x, y, TILE_LOCK_DOOR) &&
+					!has_neighbor_of_type(x, y, TILE_CHEST) &&
 					(x > MAP_OFFSET + MAP_SAFE_ZONE || x < MAP_OFFSET - MAP_SAFE_ZONE) && (y > MAP_OFFSET + MAP_SAFE_ZONE || y < MAP_OFFSET - MAP_SAFE_ZONE) ) {
 
 					flood_fill_water(x, y);
