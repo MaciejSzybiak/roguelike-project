@@ -27,6 +27,7 @@
 #define TILE_DOOR			4
 #define TILE_EXIT			5
 #define TILE_LOCK_DOOR		6
+#define TILE_CHEST			7
 
 #define TILE_INVALID		-1 //FIXME: ???
 
@@ -126,6 +127,7 @@ void player_receive_damage(int damage);
 
 void add_health(int hp);
 void add_armor(int val);
+void increase_base_stat(int is_health, int value);
 
 void player_pickup_weapon(item_t *w);
 
@@ -156,6 +158,7 @@ void next_level_action(sprite_t *s);
 
 void door_action(sprite_t *s);
 void locked_door_action(sprite_t *s);
+void chest_action(sprite_t *s);
 
 /*---------
  VISIBILITY

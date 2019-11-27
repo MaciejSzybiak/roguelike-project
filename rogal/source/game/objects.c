@@ -1,4 +1,5 @@
 #include "game.h"
+#include "particles.h"
 
 void door_action(sprite_t *s) {
 
@@ -25,5 +26,38 @@ void locked_door_action(sprite_t *s) {
 	else if (!alive_mobs_count()) {
 
 		s->current_frame = 2;
+	}
+}
+
+void chest_action(sprite_t *s) {
+
+	color3_t c;
+
+	if (s->current_frame == 1) {
+
+		//chest becomes a normal floor with a different texture
+		s->current_frame = 2; //frame 2 is an image of the open chest
+		s->collision_mask = COLLISION_FLOOR;
+		s->render_layer = RENDER_LAYER_FLOOR;
+		s->action = NULL;
+
+		//if data is not present add health. else add armor
+		if (!s->object_data) {
+
+			Color3Red(c);
+			increase_base_stat(1, 1);
+		}
+		else
+		{
+			Color3Green(c);
+			increase_base_stat(0, 1);
+
+			//clear object data
+			free(s->object_data);
+			s->object_data = NULL;
+		}
+
+		//generate particles
+		make_chest_particles(s->position, c[0], c[1], c[2]);
 	}
 }

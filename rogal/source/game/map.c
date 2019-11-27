@@ -773,6 +773,18 @@ void add_map_contents(void) {
 // locked room
 //----------
 
+void make_locked_room_chest(int x_min, int y_min, int x_max, int y_max) {
+
+	//pick a random position inside the locked room
+	int x = Random(x_min + 1, x_max - 1);
+	int y = Random(y_min + 1, y_max - 1);
+
+	map[x][y] = TILE_CHEST;
+	floor_count--;
+
+	d_printf(LOG_INFO, "%s: chest at [%d, %d]\n", __func__, x, y);
+}
+
 void make_locked_room(void) {
 
 	int x0 = 1, y0 = 1;
@@ -890,6 +902,8 @@ void make_locked_room(void) {
 	map[x0][y0] = TILE_LOCK_DOOR;
 	door_count--;
 
+	make_locked_room_chest(mins_x, mins_y, maxs_x, maxs_y);
+
 	d_printf(LOG_INFO, "%s: locked door at [%d, %d]\n", __func__, x0, y0);
 }
 
@@ -906,6 +920,7 @@ void build_sprites(void) {
 	int anim_pause;
 	int rotation;
 	void (*action)(sprite_t *s);
+	void *object_data;
 
 	//for each tile...
 	for (int x = 0; x < MAP_SIZE; x++) {
@@ -914,6 +929,7 @@ void build_sprites(void) {
 			anim_pause = 0;
 			rotation = 0;
 			action = NULL;
+			object_data = NULL;
 
 			switch (map[x][y])
 			{
@@ -949,6 +965,16 @@ void build_sprites(void) {
 					collision_mask = COLLISION_FLOOR;
 					action = next_level_action;
 					break;
+				case TILE_CHEST:
+					tname = CHEST;
+					anim_pause = 1;
+					collision_mask = COLLISION_FLOOR;
+					action = chest_action;
+					if (RandomBool) {
+
+						object_data = malloc(sizeof(int)); //armor chest type
+					}
+					break;
 				default:
 					continue;
 			}
@@ -971,6 +997,7 @@ void build_sprites(void) {
 			s->collision_mask = collision_mask;
 			s->action = action;
 			s->rotation = rotation;
+			s->object_data = object_data;
 
 			sprite_map[x][y] = s;
 		}

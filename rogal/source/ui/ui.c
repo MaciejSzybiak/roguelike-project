@@ -157,7 +157,7 @@ void hud_update_armor(void) {
 
 	char text[16];
 
-	snprintf(text, 16, "%d/%d", player.stats.armor, MAX_ARMOR);
+	snprintf(text, 16, "%d/%d", player.stats.armor, MAX_ARMOR + player.stats.armor_modifier);
 
 	set_text(hud_texts[HUD_ARMOR], text);
 }

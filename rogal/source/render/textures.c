@@ -44,6 +44,7 @@ static const texentry_t texture_names[] = {
 	{ DOOR			, "resources/textures/door.png"			, 2		, DEFAULT_ANIM_MSEC		, RENDER_LAYER_WALL },
 	{ LOCKED_DOOR	, "resources/textures/locked_door.png"	, 3		, DEFAULT_ANIM_MSEC		, RENDER_LAYER_WALL },
 	{ LEVEL_EXIT	, "resources/textures/level_exit.png"	, 1		, DEFAULT_ANIM_MSEC		, RENDER_LAYER_FLOOR },
+	{ CHEST			, "resources/textures/chest.png"		, 2		, DEFAULT_ANIM_MSEC		, RENDER_LAYER_FLOOR },
 
 	{ PLAYER_B		, "resources/textures/player_b.png"		, 2		, PLAYER_MOVE_ANIM_MSEC	, RENDER_LAYER_PLAYER },
 	{ PLAYER_R		, "resources/textures/player_r.png"		, 2		, PLAYER_MOVE_ANIM_MSEC	, RENDER_LAYER_PLAYER },

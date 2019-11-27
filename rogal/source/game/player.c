@@ -109,6 +109,7 @@ void set_player_default_state(void) {
 	player.stats.max_health = 10;
 	player.stats.attack_damage = 1;
 	player.stats.armor = 5;
+	player.stats.armor_modifier = 0;
 }
 
 sprite_t *new_player_sprite(void) {
@@ -424,7 +425,7 @@ void add_armor(int val) {
 
 	player.stats.armor += val;
 
-	r_clamp_set(player.stats.armor, 0, MAX_ARMOR);
+	r_clamp_set(player.stats.armor, 0, MAX_ARMOR + player.stats.armor_modifier);
 
 	d_printf(LOG_TEXT, "%s: added %d armor, total armor: %d\n", __func__, val, player.stats.armor);
 
@@ -432,4 +433,18 @@ void add_armor(int val) {
 	make_pickup_particles(player.sprite[0]->position, 0.f, 0.6f, 0.f);
 
 	hud_update_armor();
+}
+
+void increase_base_stat(int is_health, int value) {
+
+	if (is_health) {
+
+		player.stats.max_health += value;
+		add_health(value);
+	}
+	else
+	{
+		player.stats.armor_modifier += value;
+		add_armor(value);
+	}
 }

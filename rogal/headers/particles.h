@@ -36,3 +36,4 @@ void make_walk_dust_particle(vec2_t position, float groundheight);
 void make_blood_particles(vec2_t position, float groundheight);
 void make_death_particles(vec2_t position);
 void make_pickup_particles(vec2_t position, float color_r, float color_g, float color_b);
+void make_chest_particles(vec2_t position, float color_r, float color_g, float color_b);

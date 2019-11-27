@@ -402,3 +402,48 @@ void make_pickup_particles(vec2_t position, float color_r, float color_g, float 
 		p->velocity[VEC_Y] = rand_y;
 	}
 }
+
+void make_chest_particles(vec2_t position, float color_r, float color_g, float color_b) {
+
+	particle_t *p;
+	float color_variation;
+	float rand_x, rand_y;
+	float offs_x, offs_y;
+
+	//cone shape
+	for (int i = 0; i < 30; i++) {
+
+		//color
+		color_variation = 1.f / Random(5, 10);
+
+		//position
+		offs_x = Random(-2, 2) * 0.07f;
+		offs_y = Random(0, 2) * 0.07f;
+
+		//make the particle
+		p = new_particle();
+
+		Vec2Copy(position, p->position);
+		p->position[VEC_X] += offs_x;
+		p->position[VEC_Y] += offs_y;
+
+		p->ground_height = position[VEC_Y] - (SPRITE_SIZE * 0.8f);
+
+		p->life_msec = 1500 + Random(0, 100) * 3;
+		p->gravity = PARTICLE_DEFAULT_GRAVITY;
+
+		p->render_layer = RENDER_LAYER_EFFECT;
+
+		//set color
+		p->color[0] = color_r + color_variation;
+		p->color[1] = color_g + color_variation;
+		p->color[2] = color_b + color_variation;
+
+		//velocity
+		rand_x = Random(1, 2) * 0.1f * (RandomBool ? (-1) : 1);
+		rand_y = Random(7, 10) * 0.2f;
+
+		p->velocity[VEC_X] = rand_x;
+		p->velocity[VEC_Y] = rand_y;
+	}
+}

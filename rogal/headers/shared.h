@@ -236,6 +236,7 @@ typedef struct {
 	int attack_damage;
 	int armor;
 	int max_health;
+	int armor_modifier;
 } player_stats_t;
 
 //look directions for player and mobs
@@ -260,6 +261,7 @@ typedef enum {
 	DOOR,
 	LOCKED_DOOR,
 	LEVEL_EXIT,
+	CHEST,
 
 	PLAYER_B,
 	PLAYER_R,
