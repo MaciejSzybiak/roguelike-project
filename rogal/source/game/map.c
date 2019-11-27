@@ -879,6 +879,10 @@ void make_locked_room(void) {
 					d_printf(LOG_ERROR, "%s: tile not empty\n", __func__);
 					is_failed = 1;
 				}
+				else if (map[x][y] == TILE_DOOR) {
+
+					map[x][y] = TILE_WALL; //seal all other entrances
+				}
 
 				//walls or doors overlapping are fine
 				continue;
