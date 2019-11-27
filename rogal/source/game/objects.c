@@ -68,12 +68,12 @@ void chest_action(sprite_t *s) {
 			s->object_data = NULL;
 		}
 
+		//generate particles
+		make_chest_particles(s->position, c[0], c[1], c[2]);
+
 		//display a message
 		Color3Orange(c);
 		snprintf(text, 64, "The chest opens to reveal its secret.");
 		display_message(text, DEFAULT_MESSAGE_MSEC, c);
-
-		//generate particles
-		make_chest_particles(s->position, c[0], c[1], c[2]);
 	}
 }
