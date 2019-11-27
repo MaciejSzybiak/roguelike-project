@@ -13,6 +13,9 @@ static sprite_t *hud_sprites[3];
 
 static sprite_t *menu_background;
 
+static text_t *message_text;
+static int message_call_time;
+
 void toggle_hud(int enabled) {
 
 	for (int i = 0; i < 3; i++) {
@@ -48,6 +51,8 @@ void toggle_main_menu(int enabled) {
 			}
 
 			enable_text(main_menu[i]);
+
+			disable_message_text();
 		}
 		else
 		{
@@ -59,6 +64,37 @@ void toggle_main_menu(int enabled) {
 
 	//toggle the HUD
 	toggle_hud(!enabled);
+}
+
+void disable_message_text(void) {
+
+	hide_text(message_text);
+}
+
+void disable_message_callback(int value) {
+
+	if (value != message_call_time) {
+
+		//message overwritten by a new message, don't disable using this callback
+		return;
+	}
+
+	disable_message_text();
+}
+ 
+void display_message(char *message, int msec, color3_t color) {
+
+	Color3Copy(color, message_text->color);
+
+	set_text(message_text, message);
+	enable_text(message_text);
+
+	message_call_time = glutGet(GLUT_ELAPSED_TIME);
+
+	if (msec > 0) {
+
+		glutTimerFunc(msec, disable_message_callback, message_call_time);
+	}
 }
 
 void action_play_click(sprite_t *s) {
@@ -253,6 +289,18 @@ void generate_hud(void) {
 
 		hud_sprites[i] = s;
 	}
+
+	//make the message box
+	message_text = new_text();
+	message_text->scale = 0.35f;
+	message_text->anchor = ANCHOR_CENTER;
+	message_text->collision_mask = COLLISION_IGNORE;
+	message_text->render_layer = RENDER_LAYER_UI;
+	Vec2Zero(message_text->position);
+	message_text->position[VEC_Y] += 3.f;
+	Color3Orange(message_text->color);
+	set_text(message_text, "test");
+	hide_text(message_text);
 }
 
 //initializes the UI

@@ -1,5 +1,6 @@
 #include "game.h"
 #include "particles.h"
+#include "ui.h"
 
 void door_action(sprite_t *s) {
 
@@ -15,6 +16,9 @@ void door_action(sprite_t *s) {
 
 void locked_door_action(sprite_t *s) {
 
+	char text[256];
+	color3_t c;
+	int mob_count = alive_mobs_count();
 	if (s->current_frame == 2) {
 
 		s->current_frame = 3;
@@ -23,14 +27,21 @@ void locked_door_action(sprite_t *s) {
 		s->action = NULL;
 		recalculate_sprites_visibility();
 	}
-	else if (!alive_mobs_count()) {
+	else if (!mob_count) {
 
 		s->current_frame = 2;
+	}
+	else
+	{
+		snprintf(text, 256, "The door won't open. There is still %d creature%s alive.", mob_count, (mob_count > 1 ? "s" : ""));
+		Color3Orange(c);
+		display_message(text, DEFAULT_MESSAGE_MSEC, c);
 	}
 }
 
 void chest_action(sprite_t *s) {
 
+	char text[64];
 	color3_t c;
 
 	if (s->current_frame == 1) {
@@ -56,6 +67,11 @@ void chest_action(sprite_t *s) {
 			free(s->object_data);
 			s->object_data = NULL;
 		}
+
+		//display a message
+		Color3Orange(c);
+		snprintf(text, 64, "The chest opens to reveal its secret.");
+		display_message(text, DEFAULT_MESSAGE_MSEC, c);
 
 		//generate particles
 		make_chest_particles(s->position, c[0], c[1], c[2]);

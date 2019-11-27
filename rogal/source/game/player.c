@@ -356,7 +356,12 @@ void attack_mob(mob_t *mob) {
 
 void player_die(void) {
 
+	color3_t c;
+	Color3Red(c);
+
 	d_printf(LOG_WARNING, "PLAYER DEATH\n");
+
+	display_message("You didn't make it. Press any key to try again.", 0, c);
 
 	make_death_particles(player.sprite[0]->position);
 }
