@@ -7,6 +7,7 @@
 player_t player;
 
 int is_player_move;
+int is_player_dead = 0;
 
 int lerp_max_msec;
 int lerp_msec;
@@ -192,6 +193,7 @@ void init_player(void) {
 	create_player_sprites();
 
 	is_player_move = 0;
+	is_player_dead = 0;
 
 	recalculate_sprites_visibility();
 
@@ -358,6 +360,16 @@ void player_die(void) {
 
 	color3_t c;
 	Color3Red(c);
+
+	is_player_dead = 1;
+
+	for (int i = 0; i < 3; i++) {
+
+		if (player.sprite[i]) {
+
+			player.sprite[i]->skip_render = 1;
+		}
+	}
 
 	d_printf(LOG_WARNING, "PLAYER DEATH\n");
 

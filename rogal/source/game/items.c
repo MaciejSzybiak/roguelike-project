@@ -175,7 +175,7 @@ void init_items(void) {
 		if (map_items[i].sprite) {
 
 			//skip player's current weapon
-			if (is_ingame && player.weapon == &map_items[i]) {
+			if (is_ingame && !is_player_dead && player.weapon == &map_items[i]) {
 
 				continue;
 			}

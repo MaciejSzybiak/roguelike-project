@@ -12,6 +12,8 @@ int is_paused = 0;
 int old_frame_msec = 0;
 int frame_msec = 0;
 
+void restart_game(void);
+
 void on_player_action(sprite_t *s, int mouse_key) {
 
 	if (is_player_move || is_mob_move) {
@@ -76,6 +78,12 @@ void on_player_action(sprite_t *s, int mouse_key) {
 
 void mouse_click_event(int button, int state, int x, int y) {
 
+	if (!is_player_move && !is_mob_move && is_player_dead) {
+
+		restart_game();
+		return;
+	}
+
 	if (is_player_move || state != GLUT_UP || (button != GLUT_LEFT_BUTTON && button != GLUT_RIGHT_BUTTON)) {
 		return;
 	}
@@ -121,7 +129,11 @@ void simulate_mouse_click(int rotation) {
 
 void keyboard_press_event(unsigned char key, int x, int y) {
 
-	//d_printf(LOG_TEXT, "%s: key: %c at %dx%d\n", __func__, key, x, y);
+	if (!is_player_move && !is_mob_move && is_player_dead) {
+
+		restart_game();
+		return;
+	}
 
 	if (!is_ingame) {
 
@@ -183,6 +195,12 @@ void special_press_event(int key, int x, int y) {
 	//d_printf(LOG_TEXT, "%s: special key: %d at %dx%d\n", __func__, key, x, y);
 	UNUSED_VARIABLE(x);
 	UNUSED_VARIABLE(y);
+
+	if (!is_player_move && !is_mob_move && is_player_dead) {
+
+		restart_game();
+		return;
+	}
 
 	if (is_paused) {
 
@@ -259,6 +277,26 @@ void next_level_action(sprite_t *s) {
 	init_items();
 
 	player_next_level();
+}
+
+void restart_game(void) {
+
+	vec2_t v;
+	Vec2Zero(v);
+
+	init_particles();
+	d_spacer();
+
+	disable_message_text();
+
+	generate_map();
+	init_mobs();
+	init_items();
+
+	is_player_dead = 0;
+	init_player();
+
+	set_camera_position(v);
 }
 
 void init_game(void) {

@@ -80,12 +80,6 @@ void delete_sprite(sprite_t *s) {
 		d_printf(LOG_WARNING, "%s: tried to delete a null sprite\n", __func__);
 	}
 
-	//FIXME: if sprite has some object data then it will leak memory here!!!!!!!!!!!
-	if (s->object_data) {
-
-		free(s->object_data); //fixed?
-	}
-
 	//deleting the first sprite?
 	if (s->previous == NULL) {
 

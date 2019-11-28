@@ -121,6 +121,7 @@ MAP CONTENTS
 #define ATTACK_ANIM_MSEC	200
 
 extern int is_player_move;
+extern int is_player_dead;
 
 void attack_mob(mob_t *mob);
 void player_receive_damage(int damage);

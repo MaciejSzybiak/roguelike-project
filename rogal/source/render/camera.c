@@ -125,6 +125,7 @@ void unset_camera_for_ui(void) {
 	print_gl_errors(__func__);
 }
 
+//FIXME: unused?
 void set_camera_for_world(void) {
 
 	set_camera_position(cam.position);
