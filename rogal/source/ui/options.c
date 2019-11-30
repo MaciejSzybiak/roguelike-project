@@ -79,7 +79,7 @@ void option_click(sprite_t *s) {
 */
 void toggle_options(int are_enabled) {
 
-	for (int i = 0; i < CountOf(options); i++) {
+	for (unsigned i = 0; i < CountOf(options); i++) {
 
 		if (are_enabled) {
 
