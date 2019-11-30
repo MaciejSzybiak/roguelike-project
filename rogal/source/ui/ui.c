@@ -1,4 +1,5 @@
 #include "ui.h"
+#include "options.h"
 #include "window.h"
 #include "game.h"
 #include "camera.h"
@@ -53,6 +54,8 @@ void toggle_main_menu(int enabled) {
 			enable_text(main_menu[i]);
 
 			disable_message_text();
+
+			toggle_options(0);
 		}
 		else
 		{
@@ -60,10 +63,14 @@ void toggle_main_menu(int enabled) {
 		}
 	}
 
-	menu_background->skip_render = !enabled;
+	if (!is_options) {
 
-	//toggle the HUD
-	toggle_hud(!enabled);
+		menu_background->skip_render = !enabled;
+	
+		//toggle the HUD
+		toggle_hud(!enabled);
+	}
+
 }
 
 void disable_message_text(void) {
@@ -120,6 +127,13 @@ void action_options_click(sprite_t *s) {
 
 	//TODO
 	d_printf(LOG_INFO, "%s\n", __func__);
+
+	is_options = 1;
+
+	toggle_main_menu(0);
+	toggle_options(1);
+
+	menu_background->skip_render = 0;
 }
 
 void action_quit_click(sprite_t *s) {
@@ -309,6 +323,10 @@ void generate_ui(void) {
 	generate_main_menu();
 	generate_menu_background();
 	generate_hud();
+
+	//generate options
+	generate_options_texts();
+	toggle_options(0);
 
 	//set HUD refresh callback
 	glutTimerFunc(TICK_MSEC, refresh_hud, 0);

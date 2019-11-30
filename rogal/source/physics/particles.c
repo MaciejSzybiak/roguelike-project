@@ -19,6 +19,7 @@
 #include <string.h>
 
 static particle_t *first_particle;
+int are_particles_enabled = 1;
 
 /*
 * Used to retrieve the first particle in the particle list
@@ -231,6 +232,12 @@ void make_walk_dust_particle(vec2_t position, float groundheight) {
 	float color_variation = 1.f / Random(4, 10); //color added to the base particle color (gray)
 	float rand_x, rand_y;
 
+	//don't spawn particles when disabled
+	if (!are_particles_enabled) {
+
+		return;
+	}
+
 	//get a new particle
 	p = new_particle();
 
@@ -266,6 +273,12 @@ void make_blood_particles(vec2_t position, float groundheight) {
 	float color_variation;
 	float rand_x, rand_y;
 	float offs_x, offs_y;
+
+	//don't spawn particles when disabled
+	if (!are_particles_enabled) {
+
+		return;
+	}
 
 	//make a few particles
 	for (int i = 0; i < 7; i++) {
@@ -316,6 +329,12 @@ void make_death_particles(vec2_t position) {
 	float rand_x, rand_y;
 	float offs_x, offs_y;
 
+	//don't spawn particles when disabled
+	if (!are_particles_enabled) {
+
+		return;
+	}
+
 	//make some particles
 	for (int i = 0; i < 20; i++) {
 
@@ -365,6 +384,12 @@ void make_pickup_particles(vec2_t position, float color_r, float color_g, float 
 	float rand_x, rand_y;
 	float offs_x, offs_y;
 
+	//don't spawn particles when disabled
+	if (!are_particles_enabled) {
+
+		return;
+	}
+
 	//make some particles
 	for (int i = 0; i < 20; i++) {
 
@@ -409,6 +434,12 @@ void make_chest_particles(vec2_t position, float color_r, float color_g, float c
 	float color_variation;
 	float rand_x, rand_y;
 	float offs_x, offs_y;
+
+	//don't spawn particles when disabled
+	if (!are_particles_enabled) {
+
+		return;
+	}
 
 	//cone shape
 	for (int i = 0; i < 30; i++) {

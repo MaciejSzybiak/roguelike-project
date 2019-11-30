@@ -11,23 +11,26 @@
 #define ANCHOR_RIGHT			2
 
 typedef struct {
-	int active;
+	int			active;
 
-	int length;
-	char *text;
-	sprite_t **sprites;		//a pointer to an array of pointers...
+	int			length;
+	char		*text;
+	sprite_t	**sprites;
 
-	vec2_t position;
-	float scale;
+	vec2_t		position;
+	float		scale;
 
-	color3_t color;
+	color3_t	color;
 
-	int anchor;
+	int			anchor;
 
-	int render_layer;
-	int collision_mask;
+	int			render_layer;
+	int			collision_mask;
 
-	void (*action)(sprite_t *s);
+	void		*object_data;
+	size_t		data_size;
+
+	void		(*action)(sprite_t *s);
 } text_t;
 
 void delete_text(text_t *t);

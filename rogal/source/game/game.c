@@ -5,9 +5,11 @@
 #include "ui.h"
 #include "particles.h"
 #include <GL/glut.h>
+#include "options.h"
 
 int is_ingame = 0;
 int is_paused = 0;
+int is_options = 0;
 
 int old_frame_msec = 0;
 int frame_msec = 0;
@@ -137,6 +139,12 @@ void keyboard_press_event(unsigned char key, int x, int y) {
 
 	if (!is_ingame) {
 
+		//just check if options toggle
+		if (key == (char)27 && is_options) {
+
+			is_options = 0;
+			toggle_main_menu(1);
+		}
 		return;
 	}
 
@@ -145,7 +153,17 @@ void keyboard_press_event(unsigned char key, int x, int y) {
 
 		if (is_paused) {
 
-			toggle_main_menu(0);
+			if (is_options) {
+
+				is_options = 0;
+				toggle_main_menu(1);
+
+				is_paused = !is_paused; //HACK: don't toggle if this is options switch
+			}
+			else
+			{
+				toggle_main_menu(0);
+			}
 		}
 		else
 		{

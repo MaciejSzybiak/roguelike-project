@@ -144,9 +144,11 @@
     <ClCompile Include="source\render\textures.c" />
     <ClCompile Include="source\render\window.c" />
     <ClCompile Include="source\main.c" />
+    <ClCompile Include="source\ui\options.c" />
     <ClCompile Include="source\ui\ui.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="headers\options.h" />
     <ClInclude Include="headers\particles.h" />
     <ClInclude Include="headers\raycast.h" />
     <ClInclude Include="headers\player.h" />

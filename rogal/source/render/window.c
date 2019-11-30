@@ -56,6 +56,27 @@ void destroy_window(void) {
 }
 
 /*
+* Sets the window fullscreen.
+*/
+void make_fullscreen(void) {
+
+	window_props.w_width = window_props.width;
+	window_props.w_height = window_props.height;
+	window_props.w_pos_x = glutGet(GLUT_INIT_WINDOW_X); //FIXME: getting current window position here creates an offset
+	window_props.w_pos_y = glutGet(GLUT_INIT_WINDOW_Y);
+	glutFullScreen();
+}
+
+/*
+* Restores the windowed mode.
+*/
+void restore_windowed(void) {
+
+	glutPositionWindow(window_props.w_pos_x, window_props.w_pos_y);
+	glutReshapeWindow(window_props.w_width, window_props.w_height);
+}
+
+/*
 * Creates the game window.
 */
 void create_window(int argc, char **argv) {
@@ -65,6 +86,8 @@ void create_window(int argc, char **argv) {
 	window_props.name = &name[0];
 	window_props.width = VIRTUAL_WIDTH;
 	window_props.height = VIRTUAL_HEIGHT;
+	window_props.w_width = VIRTUAL_WIDTH;
+	window_props.w_height = VIRTUAL_HEIGHT;
 	window_props.ratio = VIRTUAL_WIDTH / VIRTUAL_HEIGHT;
 	window_props.scale = 0.2f;
 

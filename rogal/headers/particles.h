@@ -23,6 +23,9 @@ typedef struct particle {
 	struct particle *next;
 } particle_t;
 
+//particle on-off toggle for options. Stops new particles from spawning
+extern int are_particles_enabled;
+
 //general functions
 particle_t *new_particle(void);
 void delete_particle(particle_t *p);

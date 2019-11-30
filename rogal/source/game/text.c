@@ -29,6 +29,11 @@ void delete_text(text_t *t) {
 
 	free_text_sprites(t);
 
+	if (t->object_data) {
+		
+		free(t->object_data);
+	}
+
 	free(t->text);
 
 	memset(t, 0, sizeof(text_t));
@@ -48,6 +53,7 @@ text_t *new_text(void) {
 			Color3White(strings[i].color);
 			strings[i].render_layer = RENDER_LAYER_UI;
 			strings[i].collision_mask = COLLISION_IGNORE;
+			strings[i].object_data = NULL;
 			return &strings[i];
 		}
 	}
@@ -131,6 +137,24 @@ void update_text_properties(text_t *t) {
 		if (t->action) {
 
 			s->action = t->action;
+		}
+
+		//object data
+		if (t->object_data && t->data_size) {
+
+			if (t->data_size) {
+
+				//Data must be copied instead of referencing because
+				//otherwise it would get destroyed when the text is
+				//updated and the old text sprites were freed.
+				s->object_data = malloc(t->data_size);
+				memcpy(s->object_data, t->object_data, t->data_size);
+			}
+			else
+			{
+				//data was cleared for this text (no size)
+				free(s->object_data);
+			}
 		}
 	}
 }

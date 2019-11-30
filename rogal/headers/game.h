@@ -148,6 +148,7 @@ void logic_frame(int);
 
 extern int is_ingame;
 extern int is_paused;
+extern int is_options;
 
 void init_game(void);
 
