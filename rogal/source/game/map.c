@@ -570,7 +570,7 @@ void flood_fill_water(int x, int y) {
 		y0 = y + (!(i % 2)) * (i > 1 ? 1 : -1);
 
 		if (map[x0][y0] != TILE_WATER && !has_neighbor_of_type(x0, y0, TILE_WALL) && !has_neighbor_of_type(x0, y0, TILE_DOOR) && 
-			!has_neighbor_of_type(x, y, TILE_LOCK_DOOR) && !has_neighbor_of_type(x, y, TILE_CHEST) &&
+			!has_neighbor_of_type(x0, y0, TILE_LOCK_DOOR) && !has_neighbor_of_type(x0, y0, TILE_CHEST) &&
 			x0 != MAP_OFFSET && y0 != MAP_OFFSET && RandomBool) {
 
 			flood_fill_water(x0, y0);
