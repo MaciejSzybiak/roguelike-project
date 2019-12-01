@@ -272,6 +272,11 @@ typedef enum {
 	SLIME_L,
 	SLIME_ATTACK,
 
+	GOBLIN_B,
+	GOBLIN_R,
+	GOBLIN_L,
+	GOBLIN_ATTACK,
+
 	FONT,
 
 	ICON_DMG,

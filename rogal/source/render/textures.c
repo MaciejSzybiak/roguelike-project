@@ -55,6 +55,11 @@ static const texentry_t texture_names[] = {
 	{ SLIME_L		, "resources/textures/slime_l.png"		, 2		, PLAYER_MOVE_ANIM_MSEC	, RENDER_LAYER_MOB },
 	{ SLIME_ATTACK	, "resources/textures/slime_attack.png"	, 1		, PLAYER_MOVE_ANIM_MSEC	, RENDER_LAYER_EFFECT },
 
+	{ GOBLIN_B		, "resources/textures/goblin_b.png"		, 2		, PLAYER_MOVE_ANIM_MSEC	, RENDER_LAYER_MOB },
+	{ GOBLIN_R		, "resources/textures/goblin_r.png"		, 2		, PLAYER_MOVE_ANIM_MSEC	, RENDER_LAYER_MOB },
+	{ GOBLIN_L		, "resources/textures/goblin_l.png"		, 2		, PLAYER_MOVE_ANIM_MSEC	, RENDER_LAYER_MOB },
+	{ GOBLIN_ATTACK	, "resources/textures/goblin_attack.png"	, 1		, PLAYER_MOVE_ANIM_MSEC	, RENDER_LAYER_EFFECT },
+
 	{ SHIELD		, "resources/textures/shield.png"		, 1		, DEFAULT_ANIM_MSEC		, RENDER_LAYER_ITEM },
 	{ SWORD			, "resources/textures/sword.png"		, 1		, DEFAULT_ANIM_MSEC		, RENDER_LAYER_ITEM },
 	{ AXE			, "resources/textures/axe.png"			, 1		, DEFAULT_ANIM_MSEC		, RENDER_LAYER_ITEM },

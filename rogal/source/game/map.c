@@ -694,7 +694,7 @@ void make_item(int x, int y) {
 //adds a random mob
 void make_mob(int x, int y) {
 
-	map_contents[x][y] = MAP_MOB_SLIME; //only one mob type so far
+	map_contents[x][y] = RandomBool ? MAP_MOB_SLIME : MAP_MOB_GOBLIN;
 }
 
 

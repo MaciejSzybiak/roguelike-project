@@ -112,6 +112,12 @@ void generate_mobs(void) {
 					tnames[2] = SLIME_B;
 					attack_tname = SLIME_ATTACK;
 					break;
+				case MAP_MOB_GOBLIN:
+					tnames[0] = GOBLIN_R;
+					tnames[1] = GOBLIN_L;
+					tnames[2] = GOBLIN_B;
+					attack_tname = GOBLIN_ATTACK;
+					break;
 				case MAP_NOTHING:
 				default:
 					continue;
@@ -340,15 +346,266 @@ void all_mobs_attack(void) {
 	attack_routine(0);
 }
 
-//FIXME: this is a mess
-void calculate_mob_destinations(void) {
+int to_player_mob_destination(mob_t *m, int i, int *dir_out) {
+
+	vec2_t dominant_dir;
+	vec2_t dominant_dir2;
+	vec2_t player_pos;
+	sprite_t *s;
+	sprite_t *s2 = NULL;
+	float diff_x, diff_y, abs_x, abs_y;
+	int k, x, y;
+	int rotation = 0;
+	int rotation2 = 0;
+	int try_both = 0;
+	int is_first_invalid = 0;
+
+	get_player_pos(&player_pos);
+
+	//find the best tile towards player
+	diff_x = m->sprite[0]->position[VEC_X] - player_pos[VEC_X];
+	diff_y = m->sprite[0]->position[VEC_Y] - player_pos[VEC_Y];
+	abs_x = fabsf(diff_x);
+	abs_y = fabsf(diff_y);
+
+	Vec2Copy(m->sprite[0]->position, dominant_dir);
+
+	if (abs_x > abs_y) {
+
+		dominant_dir[VEC_X] += SPRITE_SIZE * 2 * (diff_x > 0 ? -1 : 1);
+		rotation = diff_x > 0 ? 2 : 0;
+	}
+	else if(abs_x < abs_y)
+	{
+		dominant_dir[VEC_Y] += SPRITE_SIZE * 2 * (diff_y > 0 ? -1 : 1);
+		rotation = diff_y > 0 ? 1 : 3;
+	}
+	else
+	{
+		//both equal
+		try_both = 1;
+		Vec2Copy(m->sprite[0]->position, dominant_dir2);
+
+		dominant_dir[VEC_X] += SPRITE_SIZE * 2 * (diff_x > 0 ? -1 : 1);
+		rotation = diff_x > 0 ? 2 : 0;
+
+		dominant_dir2[VEC_Y] += SPRITE_SIZE * 2 * (diff_y > 0 ? -1 : 1);
+		rotation2 = diff_y > 0 ? 1 : 3;
+	}
+
+	//check player attack
+	if (Vec2Distance(m->sprite[0]->position, player_pos) <= SPRITE_SIZE * 2) {
+
+		attacks_player[i] = 1;
+
+		mob_look_at_rotation(m, rotation);
+
+		return 2;
+	}
+
+	//check other mobs
+	for (k = 0; k < MAX_MOBS; k++) {
+
+		if (!mobs[k].sprite[0]) {
+
+			continue;
+		}
+
+		if (Vec2Distance(dominant_dir, mobs[k].sprite[0]->position) < SPRITE_SIZE) {
+
+			//another mob is on that tile
+			if (try_both) {
+
+				if (Vec2Distance(dominant_dir2, mobs[k].sprite[0]->position) < SPRITE_SIZE) {
+
+					return 0;
+				}
+			}
+			else
+			{
+				return 0;
+			}
+			is_first_invalid = 1;
+		}
+
+		//if lerp vector is set and the distance is too small... (another mob will take this tile)
+		if (lerp_max_msecs[k] && Vec2Distance(dominant_dir, lerp_ends[k]) < SPRITE_SIZE) {
+
+			if (try_both) {
+
+				if (lerp_max_msecs[k] && Vec2Distance(dominant_dir2, lerp_ends[k]) < SPRITE_SIZE) {
+
+					return 0;
+				}
+			}
+			else
+			{
+				return 0;
+			}
+			is_first_invalid = 1;
+		}
+	}
+
+	//check tiles
+	x = (int)((MAP_OFFSET + dominant_dir[VEC_X]) / (SPRITE_SIZE * 2));
+	y = (int)((MAP_OFFSET + dominant_dir[VEC_Y]) / (SPRITE_SIZE * 2));
+
+	s = sprite_map[x][y];
+
+	if (!s) {
+
+		if (!try_both) {
+
+			return 0;
+		}
+		is_first_invalid = 1;
+	}
+	if (try_both) {
+
+		x = (int)((MAP_OFFSET + dominant_dir2[VEC_X]) / (SPRITE_SIZE * 2));
+		y = (int)((MAP_OFFSET + dominant_dir2[VEC_Y]) / (SPRITE_SIZE * 2));
+
+		s2 = sprite_map[x][y];
+
+		if (!s2 && is_first_invalid) {
+
+			return 0;
+		}
+	}
+
+	if (s->collision_mask & COLLISION_FLOOR) {
+
+		//walk here
+
+		//calculate lerp
+		Vec2Copy(m->sprite[0]->position, lerp_starts[i]);
+		Vec2Copy(m->sprite[0]->position, lerp_ends[i]);
+
+		lerp_ends[i][VEC_X] += (SPRITE_SIZE * 2 * !(rotation & 1)) * (rotation > 0 ? -1 : 1);
+		lerp_ends[i][VEC_Y] += (SPRITE_SIZE * 2 * (rotation & 1)) * (rotation > 1 ? 1 : -1);
+
+		*dir_out = rotation;
+
+		return 1;
+	}
+	else if (try_both && s2 && s2->collision_mask & COLLISION_FLOOR) {
+
+		//or here
+		Vec2Copy(m->sprite[0]->position, lerp_starts[i]);
+		Vec2Copy(m->sprite[0]->position, lerp_ends[i]);
+
+		lerp_ends[i][VEC_X] += (SPRITE_SIZE * 2 * !(rotation2 & 1)) * (rotation2 > 0 ? -1 : 1);
+		lerp_ends[i][VEC_Y] += (SPRITE_SIZE * 2 * (rotation2 & 1)) * (rotation2 > 1 ? 1 : -1);
+
+		*dir_out = rotation2;
+
+		return 1;
+	}
+	d_printf(LOG_TEXT, "%s: not floor\n", __func__);
+
+	return 0;
+}
+
+//1 if moves, 2 if attacks
+int random_mob_destination(mob_t *m, int i, int *rand_out) {
 
 	vec2_t vtemp;
 	vec2_t player_pos;
 	int available_angles[4];
-	int x, y, random, no_angles, i, j, k;
+	int x, y, random, no_angles, j, k;
 	sprite_t *s;
 
+	get_player_pos(&player_pos);
+
+	no_angles = 1;
+	memset(&available_angles, 0, sizeof(int) * 4);
+
+	for (j = 0; j < 4; j++) {
+
+		Vec2Copy(m->sprite[0]->position, vtemp);
+
+		vtemp[VEC_X] += (SPRITE_SIZE * 2 * !(j & 1)) * (j > 0 ? -1 : 1);
+		vtemp[VEC_Y] += (SPRITE_SIZE * 2 * (j & 1)) * (j > 1 ? 1 : -1);
+
+		//check if blocked by player
+		if (Vec2Distance(vtemp, player_pos) < SPRITE_SIZE) {
+
+			attacks_player[i] = 1;
+
+			//look at the player
+			mob_look_at_rotation(m, j);
+
+			return 2;
+		}
+
+		//check other mobs
+		for (k = 0; k < MAX_MOBS; k++) {
+
+			if (!mobs[k].sprite[0]) {
+
+				continue;
+			}
+
+			if (Vec2Distance(vtemp, mobs[k].sprite[0]->position) < SPRITE_SIZE) {
+
+				//another mob is on that tile
+				goto next_angle;
+			}
+			//if lerp vector is set and the distance is too small... (another mob will take this tile)
+			if (lerp_max_msecs[k] && Vec2Distance(vtemp, lerp_ends[k]) < SPRITE_SIZE) {
+
+				goto next_angle;
+			}
+		}
+
+		//check tiles
+		x = (int)((MAP_OFFSET + vtemp[VEC_X]) / (SPRITE_SIZE * 2));
+		y = (int)((MAP_OFFSET + vtemp[VEC_Y]) / (SPRITE_SIZE * 2));
+
+		s = sprite_map[x][y];
+
+		if (!s) {
+
+			continue;
+		}
+		if (s->collision_mask & COLLISION_FLOOR) {
+
+			available_angles[j] = 1;
+			no_angles = 0;
+		}
+
+	next_angle:
+		continue;
+	}
+
+	//mob can't go anywhere
+	if (no_angles) {
+
+		return 0;
+	}
+
+	//pick a random available angle
+	do {
+		random = Random(0, 3);
+	} while (!available_angles[random]);
+
+	//calculate lerp
+	Vec2Copy(m->sprite[0]->position, lerp_starts[i]);
+	Vec2Copy(m->sprite[0]->position, lerp_ends[i]);
+
+	lerp_ends[i][VEC_X] += (SPRITE_SIZE * 2 * !(random & 1)) * (random > 0 ? -1 : 1);
+	lerp_ends[i][VEC_Y] += (SPRITE_SIZE * 2 * (random & 1)) * (random > 1 ? 1 : -1);
+
+	*rand_out = random;
+
+	return 1;
+}
+
+//FIXME: this is a mess
+void calculate_mob_destinations(void) {
+
+	int current, i;
+	int random = 0;
 	int any_attacks = 0;
 
 	//clear all arrays
@@ -358,11 +615,8 @@ void calculate_mob_destinations(void) {
 	memset(&lerp_max_msecs, 0, sizeof(int) * MAX_MOBS);
 	memset(&attacks_player, 0, sizeof(int) * MAX_MOBS);
 
-	get_player_pos(&player_pos);
-
 	for (i = 0; i < MAX_MOBS; i++) {
 
-next_mob:
 		if (!mobs[i].sprite[0] || !mobs[i].sprite[1]|| !mobs[i].sprite[2]
 			|| (mobs[i].sprite[0]->skip_render == 1 &&
 			mobs[i].sprite[1]->skip_render == 1 && 
@@ -372,86 +626,24 @@ next_mob:
 			continue;
 		}
 
-		no_angles = 1;
-		memset(&available_angles, 0, sizeof(int) * 4);
+		if (mobs[i].type == MAP_MOB_SLIME) {
 
-		for (j = 0; j < 4; j++) {
-
-			Vec2Copy(mobs[i].sprite[0]->position, vtemp);
-
-			vtemp[VEC_X] += (SPRITE_SIZE * 2 * !(j & 1)) * (j > 0 ? -1 : 1);
-			vtemp[VEC_Y] += (SPRITE_SIZE * 2 * (j & 1)) * (j > 1 ? 1 : -1);
-
-			//check if blocked by player
-			if (Vec2Distance(vtemp, player_pos) < SPRITE_SIZE) {
-
-				attacks_player[i] = 1;
-				any_attacks = 1;
-
-				//look at the player
-				mob_look_at_rotation(&mobs[i], j);
-
-				i++;
-				goto next_mob;
-			}
-
-			//check other mobs
-			for (k = 0; k < MAX_MOBS; k++) {
-
-				if (!mobs[k].sprite[0]) {
-
-					continue;
-				}
-
-				if (Vec2Distance(vtemp, mobs[k].sprite[0]->position) < SPRITE_SIZE) {
-
-					//another mob is on that tile
-					goto next_angle;
-				}
-				//if lerp vector is set and the distance is too small...
-				if (lerp_max_msecs[k] && Vec2Distance(vtemp, lerp_ends[k]) < SPRITE_SIZE) {
-
-					goto next_angle;
-				}
-			}
-
-			//check tiles
-			x = (int)((MAP_OFFSET + vtemp[VEC_X]) / (SPRITE_SIZE * 2));
-			y = (int)((MAP_OFFSET + vtemp[VEC_Y]) / (SPRITE_SIZE * 2));
-
-			s = sprite_map[x][y];
-
-			if (!s) {
-
-				continue;
-			}
-			if (s->collision_mask & COLLISION_FLOOR) {
-
-				available_angles[j] = 1;
-				no_angles = 0;
-			}
-
-next_angle:
-			continue;
+			current = random_mob_destination(&mobs[i], i, &random);
+		}
+		else
+		{
+			current = to_player_mob_destination(&mobs[i], i, &random);
 		}
 
-		//mob can't go anywhere
-		if (no_angles) {
+		if (current == 2) { //2 == attack
+
+			any_attacks = 1;
+		}
+
+		if (current != 1) { //1 == move
 
 			continue;
 		}
-
-		//pick a random available angle
-		do {
-			random = Random(0, 3);
-		} while (!available_angles[random]);
-
-		//calculate lerp
-		Vec2Copy(mobs[i].sprite[0]->position, lerp_starts[i]);
-		Vec2Copy(mobs[i].sprite[0]->position, lerp_ends[i]);
-
-		lerp_ends[i][VEC_X] += (SPRITE_SIZE * 2 * !(random & 1)) * (random > 0 ? -1 : 1);
-		lerp_ends[i][VEC_Y] += (SPRITE_SIZE * 2 * (random & 1)) * (random > 1 ? 1 : -1);
 
 		//make mobs move faster than the player (slow movement ruins the game flow...)
 		lerp_max_msecs[i] = (int)((1000 / (MOVE_SPEED * 8)) * SPRITE_SIZE * 2);
