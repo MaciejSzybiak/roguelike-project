@@ -31,39 +31,39 @@ static GLuint textures[MAX_TEXTURES];
 static const texentry_t texture_names[] = {
 
 	//name          file path								frames	frametime				render layer
-	{ FONT			, "resources/textures/font.png"			, 64	, DEFAULT_ANIM_MSEC		, RENDER_LAYER_UI },
+	{ FONT			, "resources/textures/font.png"				, 64	, DEFAULT_ANIM_MSEC		, RENDER_LAYER_UI },
 
-	{ ICON_DMG		, "resources/textures/dmg_icon.png"		, 1		, DEFAULT_ANIM_MSEC		, RENDER_LAYER_UI },
-	{ ICON_ARMOR	, "resources/textures/armor_icon.png"	, 1		, DEFAULT_ANIM_MSEC		, RENDER_LAYER_UI },
-	{ ICON_HP		, "resources/textures/health_icon.png"	, 1		, DEFAULT_ANIM_MSEC		, RENDER_LAYER_UI },
+	{ ICON_DMG		, "resources/textures/dmg_icon.png"			, 1		, DEFAULT_ANIM_MSEC		, RENDER_LAYER_UI },
+	{ ICON_ARMOR	, "resources/textures/armor_icon.png"		, 1		, DEFAULT_ANIM_MSEC		, RENDER_LAYER_UI },
+	{ ICON_HP		, "resources/textures/health_icon.png"		, 1		, DEFAULT_ANIM_MSEC		, RENDER_LAYER_UI },
 
-	{ ROCK			, "resources/textures/rock.png"			, 1		, DEFAULT_ANIM_MSEC		, RENDER_LAYER_FLOOR },
-	{ WALL			, "resources/textures/wall.png"			, 1		, DEFAULT_ANIM_MSEC		, RENDER_LAYER_WALL },
-	{ WATER			, "resources/textures/water1.png"		, 8		, DEFAULT_ANIM_MSEC		, RENDER_LAYER_FLOOR },
+	{ ROCK			, "resources/textures/rock.png"				, 1		, DEFAULT_ANIM_MSEC		, RENDER_LAYER_FLOOR },
+	{ WALL			, "resources/textures/wall.png"				, 1		, DEFAULT_ANIM_MSEC		, RENDER_LAYER_WALL },
+	{ WATER			, "resources/textures/water1.png"			, 8		, DEFAULT_ANIM_MSEC		, RENDER_LAYER_FLOOR },
 
-	{ DOOR			, "resources/textures/door.png"			, 2		, DEFAULT_ANIM_MSEC		, RENDER_LAYER_WALL },
-	{ LOCKED_DOOR	, "resources/textures/locked_door.png"	, 3		, DEFAULT_ANIM_MSEC		, RENDER_LAYER_WALL },
-	{ LEVEL_EXIT	, "resources/textures/level_exit.png"	, 1		, DEFAULT_ANIM_MSEC		, RENDER_LAYER_FLOOR },
-	{ CHEST			, "resources/textures/chest.png"		, 2		, DEFAULT_ANIM_MSEC		, RENDER_LAYER_FLOOR },
+	{ DOOR			, "resources/textures/door.png"				, 2		, DEFAULT_ANIM_MSEC		, RENDER_LAYER_WALL },
+	{ LOCKED_DOOR	, "resources/textures/locked_door.png"		, 3		, DEFAULT_ANIM_MSEC		, RENDER_LAYER_WALL },
+	{ LEVEL_EXIT	, "resources/textures/level_exit.png"		, 1		, DEFAULT_ANIM_MSEC		, RENDER_LAYER_FLOOR },
+	{ CHEST			, "resources/textures/chest.png"			, 2		, DEFAULT_ANIM_MSEC		, RENDER_LAYER_FLOOR },
 
-	{ PLAYER_B		, "resources/textures/player_b.png"		, 2		, PLAYER_MOVE_ANIM_MSEC	, RENDER_LAYER_PLAYER },
-	{ PLAYER_R		, "resources/textures/player_r.png"		, 2		, PLAYER_MOVE_ANIM_MSEC	, RENDER_LAYER_PLAYER },
-	{ PLAYER_L		, "resources/textures/player_l.png"		, 2		, PLAYER_MOVE_ANIM_MSEC	, RENDER_LAYER_PLAYER },
+	{ PLAYER_B		, "resources/textures/player_b.png"			, 2		, PLAYER_MOVE_ANIM_MSEC	, RENDER_LAYER_PLAYER },
+	{ PLAYER_R		, "resources/textures/player_r.png"			, 2		, PLAYER_MOVE_ANIM_MSEC	, RENDER_LAYER_PLAYER },
+	{ PLAYER_L		, "resources/textures/player_l.png"			, 2		, PLAYER_MOVE_ANIM_MSEC	, RENDER_LAYER_PLAYER },
 
-	{ SLIME_B		, "resources/textures/slime_b.png"		, 2		, PLAYER_MOVE_ANIM_MSEC	, RENDER_LAYER_MOB },
-	{ SLIME_R		, "resources/textures/slime_r.png"		, 2		, PLAYER_MOVE_ANIM_MSEC	, RENDER_LAYER_MOB },
-	{ SLIME_L		, "resources/textures/slime_l.png"		, 2		, PLAYER_MOVE_ANIM_MSEC	, RENDER_LAYER_MOB },
-	{ SLIME_ATTACK	, "resources/textures/slime_attack.png"	, 1		, PLAYER_MOVE_ANIM_MSEC	, RENDER_LAYER_EFFECT },
+	{ SLIME_B		, "resources/textures/slime_b.png"			, 2		, PLAYER_MOVE_ANIM_MSEC	, RENDER_LAYER_MOB },
+	{ SLIME_R		, "resources/textures/slime_r.png"			, 2		, PLAYER_MOVE_ANIM_MSEC	, RENDER_LAYER_MOB },
+	{ SLIME_L		, "resources/textures/slime_l.png"			, 2		, PLAYER_MOVE_ANIM_MSEC	, RENDER_LAYER_MOB },
+	{ SLIME_ATTACK	, "resources/textures/slime_attack.png"		, 1		, PLAYER_MOVE_ANIM_MSEC	, RENDER_LAYER_EFFECT },
 
-	{ GOBLIN_B		, "resources/textures/goblin_b.png"		, 2		, PLAYER_MOVE_ANIM_MSEC	, RENDER_LAYER_MOB },
-	{ GOBLIN_R		, "resources/textures/goblin_r.png"		, 2		, PLAYER_MOVE_ANIM_MSEC	, RENDER_LAYER_MOB },
-	{ GOBLIN_L		, "resources/textures/goblin_l.png"		, 2		, PLAYER_MOVE_ANIM_MSEC	, RENDER_LAYER_MOB },
+	{ GOBLIN_B		, "resources/textures/goblin_b.png"			, 2		, PLAYER_MOVE_ANIM_MSEC	, RENDER_LAYER_MOB },
+	{ GOBLIN_R		, "resources/textures/goblin_r.png"			, 2		, PLAYER_MOVE_ANIM_MSEC	, RENDER_LAYER_MOB },
+	{ GOBLIN_L		, "resources/textures/goblin_l.png"			, 2		, PLAYER_MOVE_ANIM_MSEC	, RENDER_LAYER_MOB },
 	{ GOBLIN_ATTACK	, "resources/textures/goblin_attack.png"	, 1		, PLAYER_MOVE_ANIM_MSEC	, RENDER_LAYER_EFFECT },
 
-	{ SHIELD		, "resources/textures/shield.png"		, 1		, DEFAULT_ANIM_MSEC		, RENDER_LAYER_ITEM },
-	{ SWORD			, "resources/textures/sword.png"		, 1		, DEFAULT_ANIM_MSEC		, RENDER_LAYER_ITEM },
-	{ AXE			, "resources/textures/axe.png"			, 1		, DEFAULT_ANIM_MSEC		, RENDER_LAYER_ITEM },
-	{ POTION_HP		, "resources/textures/potion_hp.png"	, 1		, DEFAULT_ANIM_MSEC		, RENDER_LAYER_ITEM }
+	{ SHIELD		, "resources/textures/shield.png"			, 1		, DEFAULT_ANIM_MSEC		, RENDER_LAYER_ITEM },
+	{ SWORD			, "resources/textures/sword.png"			, 1		, DEFAULT_ANIM_MSEC		, RENDER_LAYER_ITEM },
+	{ AXE			, "resources/textures/axe.png"				, 1		, DEFAULT_ANIM_MSEC		, RENDER_LAYER_ITEM },
+	{ POTION_HP		, "resources/textures/potion_hp.png"		, 1		, DEFAULT_ANIM_MSEC		, RENDER_LAYER_ITEM }
 };
 
 //----------

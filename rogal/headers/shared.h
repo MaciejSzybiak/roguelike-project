@@ -319,14 +319,14 @@ int get_texture_render_layer(texname name);
 #define COLLISION_IGNORE	0
 
 #define COLLISION_FLOOR		1
-#define COLLISION_WALL		1<<1
-#define COLLISION_WATER		1<<2
-#define COLLISION_OBSTACLE  1<<3
-#define COLLISION_ITEM		1<<4
-#define COLLISION_MOB		1<<5
-#define COLLISION_PLAYER	1<<6
+#define COLLISION_WALL		(1<<1)
+#define COLLISION_WATER		(1<<2)
+#define COLLISION_OBSTACLE  (1<<3)
+#define COLLISION_ITEM		(1<<4)
+#define COLLISION_MOB		(1<<5)
+#define COLLISION_PLAYER	(1<<6)
 
-#define COLLISION_UI		1<<8
+#define COLLISION_UI		(1<<8)
 
 //interactable collision layers
 #define COLLISION_PLAYER_ACTION	(COLLISION_FLOOR | COLLISION_WALL | COLLISION_OBSTACLE | COLLISION_ITEM | COLLISION_MOB)

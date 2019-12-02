@@ -1,3 +1,8 @@
+/*
+* This file manages platform specific logging system, including platform specific
+* color formatting. It also includes a platform specific malloc error handler.
+*/
+
 #include "shared.h"
 #include <stdarg.h>
 
@@ -23,7 +28,9 @@ HANDLE hOutput;
 
 #define MAX_MSG_LENGTH 256
 
-//formats and prints debug message of the given type
+/*
+* Formats and prints a debug message of the given type.
+*/
 void d_printf(int type, const char *format, ...) {
 
 #ifdef _DEBUG 
@@ -34,14 +41,14 @@ void d_printf(int type, const char *format, ...) {
 	va_list ptr;
 	va_start(ptr, format);
 
-	vsnprintf(text, MAX_MSG_LENGTH, format, ptr);
+	vsnprintf(text, MAX_MSG_LENGTH, format, ptr); //safe vargs print
 
 	va_end(ptr);
 
 #ifdef WIN32
 	if (!hOutput) {
 
-		//set handle to winddows console output
+		//set handle to windows console output
 		hOutput = GetStdHandle(STD_OUTPUT_HANDLE);
 	}
 #endif
@@ -74,11 +81,15 @@ void d_printf(int type, const char *format, ...) {
 #endif // _DEBUG 
 }
 
+/*
+* Prints a green spacer between log messages.
+*/
 void d_spacer(void) {
 
 #ifdef WIN32
 	if (!hOutput) {
 
+		//make sure the output handle is set
 		hOutput = GetStdHandle(STD_OUTPUT_HANDLE);
 	}
 #endif // WIN32
@@ -88,13 +99,16 @@ void d_spacer(void) {
 	CLR_RESET;
 }
 
+/*
+* Handles out of memory (malloc) error.
+*/
 void out_of_memory_error(const char *caller) {
 
 #ifdef WIN32
-	//display a message box
+	//on windows we can display a message box
 	MessageBox(NULL, "malloc failed: out of memory", caller, MB_OK | MB_ICONERROR);
 #else
-	//print a console message
+	//on linux print a console message
 	CLR_RED;
 	printf("%s", caller);
 	printf(": malloc failed: out of memory\n");

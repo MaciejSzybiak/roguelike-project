@@ -21,9 +21,9 @@ int has_lock_room;
 
 //directions from tile
 #define DIR_E	1		//x++ east
-#define DIR_S	1<<1	//y-- south
-#define DIR_W	1<<2	//x-- west
-#define DIR_N	1<<3	//y++ north
+#define DIR_S	(1<<1)	//y-- south
+#define DIR_W	(1<<2)	//x-- west
+#define DIR_N	(1<<3)	//y++ north
 
 //direction axes
 #define AXIS_X (DIR_E | DIR_W)

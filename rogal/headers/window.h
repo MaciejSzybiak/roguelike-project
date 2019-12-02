@@ -8,14 +8,14 @@
 #define VIRTUAL_HEIGHT	720
 
 typedef struct {
-	float scale;			//world scale
-	float ratio;			//aspect ratio
+	float	scale;				//world scale
+	float	ratio;				//aspect ratio
 
-	int width, height;		//window dimensions
-	char *name;				//window name
+	int		width, height;		//window dimensions
+	char	*name;				//window name
 
-	int w_width, w_height;	//last windowed mode dimensions
-	int w_pos_x, w_pos_y;	//last windowed mode position
+	int		w_width, w_height;	//last windowed mode dimensions
+	int		w_pos_x, w_pos_y;	//last windowed mode position
 } window_t;
 
 extern window_t window_props;

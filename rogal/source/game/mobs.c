@@ -1,3 +1,12 @@
+/*
+* This file is responsible for managing mob allocation and behaviour.
+* Mobs are the hostile creatures that player meets while exploring
+* dungeons.
+* 
+* Mob behaviour includes walking (randomly or towards player) and attacking
+* the player when next to him.
+*/
+
 #include "game.h"
 #include "camera.h"
 #include "raycast.h"
@@ -5,18 +14,22 @@
 #include <string.h>
 #include <GL/glut.h>
 
-int		is_mob_move = 0;
-mob_t	mobs[MAX_MOBS];
+int		is_mob_move = 0;					//global mob state: if mobs are moving then no inputs are processed
+mob_t	mobs[MAX_MOBS];						//all mobs are kept here
 
-vec2_t	lerp_starts[MAX_MOBS];
-vec2_t	lerp_ends[MAX_MOBS];
-int		lerp_max_msecs[MAX_MOBS];
-int		lerp_msecs[MAX_MOBS];
+//behaviour
+static vec2_t	lerp_starts[MAX_MOBS];		//each mob can have a movement start
+static vec2_t	lerp_ends[MAX_MOBS];		//and movement end
+static int		lerp_max_msecs[MAX_MOBS];	//how many miliseconds should the move take
+static int		lerp_msecs[MAX_MOBS];		//how many miliseconds this move already took
 
-int		attacks_player[MAX_MOBS];
+static int		attacks_player[MAX_MOBS];	//1 => this mob attacks the player
 
-int		is_mob_attack = 0;
+static int		is_mob_attack = 0;			//local attack state (for holding movement until attacks are done)
 
+/*
+* Deletes the mob from current level.
+*/
 void delete_mob(mob_t *mob) {
 
 	if (!mob) {
@@ -25,6 +38,7 @@ void delete_mob(mob_t *mob) {
 		return;
 	}
 
+	//delete mob's sprites
 	for (int i = 0; i < 3; i++) {
 
 		if (mob->sprite[i]) {
@@ -33,27 +47,37 @@ void delete_mob(mob_t *mob) {
 		}
 	}
 
+	//delete attack sprite
 	if (mob->attack_sprite) {
 
 		delete_sprite(mob->attack_sprite);
 	}
 
+	//wipe the entire structure
 	memset(mob, 0, sizeof(mob_t));
 }
 
+/*
+* Finds a free mob slot and returns a pointer to it.
+*/
 mob_t *new_mob(void) {
 
 	for (int i = 0; i < MAX_MOBS; i++) {
 
+		//empty mob
 		if (mobs[i].type == MAP_NOTHING) {
 
 			return &mobs[i];
 		}
 	}
+	//array end
 	d_printf(LOG_ERROR, "%s: max mobs exceeded!\n", __func__);
-	return &mobs[MAX_MOBS - 1];
+	return &mobs[MAX_MOBS - 1]; //FIXME: this might memleak sprite references!
 }
 
+/*
+* Counts all alive mobs and returns the amount.
+*/
 int alive_mobs_count(void) {
 
 	int count = 0;
@@ -67,6 +91,9 @@ int alive_mobs_count(void) {
 	return count;
 }
 
+/*
+* Gives mob random statistics in range of the preset limits.
+*/
 void randomize_mob(mob_t *mob) {
 
 	mob->stats.health = mob->stats.max_health = MIN_MOB_HEALTH + rand() % (MAX_MOB_HEALTH + 1);
@@ -74,6 +101,9 @@ void randomize_mob(mob_t *mob) {
 	mob->stats.attack_damage = MIN_MOB_DAMAGE + rand() % (MAX_MOB_DAMAGE + 1);
 }
 
+/*
+* Adds a sprite to the *mob at the given index, with the given name and position.
+*/
 void add_mob_sprite(mob_t *mob, int index, texname tname, float x_pos, float y_pos) {
 
 	sprite_t *s;
@@ -94,13 +124,17 @@ void add_mob_sprite(mob_t *mob, int index, texname tname, float x_pos, float y_p
 	mob->sprite[index] = s;
 }
 
+/*
+* Generates mobs based on map_contents array.
+*/
 void generate_mobs(void) {
 
-	texname tnames[3];
-	texname attack_tname;
+	texname tnames[3];		//names for all mob sprites
+	texname attack_tname;	//name of the attack sprite
 	mob_t *mob;
 	sprite_t *s;
 
+	//check all map contents
 	for (int x = 0; x < MAP_SIZE; x++) {
 		for (int y = 0; y < MAP_SIZE; y++) {
 
@@ -123,15 +157,17 @@ void generate_mobs(void) {
 					continue;
 			}
 
+			//get a new mob
 			mob = new_mob();
 			mob->type = map_contents[x][y];
 
+			//set sprites
 			for (int i = 0; i < 3; i++) {
 
 				add_mob_sprite(mob, i, tnames[i], (x * SPRITE_SIZE * 2) - MAP_OFFSET, (y * SPRITE_SIZE * 2) - MAP_OFFSET);
 			}
 
-			mob->sprite[0]->skip_render = 0;
+			mob->sprite[0]->skip_render = 0; //activate first sprite by default
 
 			//add attack sprite
 			s = new_sprite();
@@ -150,13 +186,17 @@ void generate_mobs(void) {
 
 			mob->attack_sprite = s;
 
-			randomize_mob(mob);
+			randomize_mob(mob); //set random statistics
 		}
 	}
 }
 
+/*
+* Runs mob initialization (executed after map generation)
+*/
 void init_mobs(void) {
 
+	//clear all existing mobs
 	for (int i = 0; i < MAX_MOBS; i++) {
 
 		if (mobs[i].sprite[0]) {
@@ -165,34 +205,50 @@ void init_mobs(void) {
 		}
 	}
 
+	//wipe the entire array
 	memset(&mobs, 0, sizeof(mob_t) * MAX_MOBS);
+
+	//generate new mobs
 	generate_mobs();
 }
 
+/*
+* Finds mob with a given position (if there is any).
+*/
 mob_t *find_mob(vec2_t position) {
 
 	for (int i = 0; i < MAX_MOBS; i++) {
 
+		//check if mob is active and position matches
 		if (mobs[i].type != MAP_NOTHING && Vec2Compare(mobs[i].sprite[0]->position, position)) {
 
 			return &mobs[i];
 		}
 	}
+	//found nothing
 	d_printf(LOG_WARNING, "%s: mob not found!\n", __func__);
 	return NULL;
 }
 
+/*
+* Executed when mob's health goes equal or below 0HP
+*/
 void mob_die(mob_t *mob) {
 
 	delete_mob(mob);
 }
 
+/*
+* Activates correct mob sprite and sets look direction according to the rotation.
+*/
 void mob_look_at_rotation(mob_t *mob, int rot) {
 
+	//deactivate all sprites
 	for (int i = 0; i < 3; i++) {
 
 		mob->sprite[i]->skip_render = 1;
 	}
+	//activate the correct sprite
 	switch (rot)
 	{
 		case ROTATION_0:
@@ -211,23 +267,30 @@ void mob_look_at_rotation(mob_t *mob, int rot) {
 	}
 }
 
+/*
+* Glut timer callback that makes all mobs move from lerp_start to lerp_end
+*/
 void lerp_all_mobs(int value) {
 
 	vec2_t v;
 	int lerp_current_msec;
-	int msec = glutGet(GLUT_ELAPSED_TIME) - value;
+	int msec = glutGet(GLUT_ELAPSED_TIME) - value; //get delta time (value is elapsed time on last frame)
 	int all_done = 1;
 
+	//iterate over all mobs (they all move at once)
 	for (int i = 0; i < MAX_MOBS; i++) {
 
 		if (lerp_max_msecs[i] == 0 || lerp_msecs[i] == lerp_max_msecs[i]) {
 
+			//this mob doesn't move
 			continue;
 		}
-		all_done = 0;
+		all_done = 0; //this one needs to be moved, so it's not "all done"
 
+		//increment lerp miliseconds
 		lerp_current_msec = lerp_msecs[i] + msec;
 
+		//maximum lerp time reached?
 		if (lerp_current_msec >= lerp_max_msecs[i]) {
 
 			lerp_current_msec = lerp_max_msecs[i];
@@ -243,9 +306,11 @@ void lerp_all_mobs(int value) {
 
 		lerp_msecs[i] = lerp_current_msec;
 
+		//find new position of the mob (lerp between move start and end by total time's fraction in this frame
 		Vec2Zero(v);
 		Vec2Lerp(lerp_starts[i], lerp_ends[i], (float)lerp_current_msec / lerp_max_msecs[i], v);
 
+		//apply position to all sprites
 		for (int j = 0; j < 3; j++) {
 
 			Vec2Copy(v, mobs[i].sprite[j]->position);
@@ -254,31 +319,40 @@ void lerp_all_mobs(int value) {
 
 	if (!all_done) {
 
-		//continue
-		glutTimerFunc(TICK_MSEC, lerp_all_mobs, glutGet(GLUT_ELAPSED_TIME));
+		//execute again at next tick time
+		glutTimerFunc(TICK_MSEC, lerp_all_mobs, glutGet(GLUT_ELAPSED_TIME)); //pass current time as value
 	}
 	else
 	{
 		//end
 		is_mob_move = 0;
-		recalculate_sprites_visibility();
+		recalculate_sprites_visibility(); //recalculate visibility after movement
 	}
 }
 
+/*
+* This timer callback waits for attack routine to end and executes movement callback.
+*/
 void lerp_mobs_wait_for_attack(int value) {
 
 	UNUSED_VARIABLE(value);
 
 	if (is_mob_attack) {
 
+		//still attacking, recheck at next tick
 		glutTimerFunc(TICK_MSEC, lerp_mobs_wait_for_attack, 0);
 	}
 	else
 	{
+		//run movement lerp routine
 		glutTimerFunc(TICK_MSEC, lerp_all_mobs, glutGet(GLUT_ELAPSED_TIME));
 	}
 }
 
+/*
+* Attack routine callback. Basically this function makes the mob attack sprite appear for a while.
+* Value = 0: start attack, value = 1: end attack.
+*/
 void attack_routine(int value) {
 
 	float diff_x, diff_y;
@@ -293,11 +367,14 @@ void attack_routine(int value) {
 			if (attacks_player[i]) {
 
 				//show the attack sprite
-				diff_x = player_pos[VEC_X] - mobs[i].sprite[0]->position[VEC_X];
-				diff_y = player_pos[VEC_Y] - mobs[i].sprite[0]->position[VEC_Y];
+
 
 				//set rotation
 				mobs[i].attack_sprite->rotation = LookToRot(mobs[i].look_direction);
+
+				//set attack sprite rotation
+				diff_x = player_pos[VEC_X] - mobs[i].sprite[0]->position[VEC_X];
+				diff_y = player_pos[VEC_Y] - mobs[i].sprite[0]->position[VEC_Y];
 
 				if (diff_x < 0) {
 
@@ -316,18 +393,22 @@ void attack_routine(int value) {
 					mobs[i].attack_sprite->rotation = 3;
 				}
 
+				//activate the attack sprite
 				mobs[i].attack_sprite->skip_render = 0;
 
+				//move to the correct position
 				Vec2Lerp(mobs[i].sprite[0]->position, player_pos, 0.5f, mobs[i].attack_sprite->position);
 
 				//make player receive the damage
 				player_receive_damage(mobs[i].stats.attack_damage);
 			}
 		}
-		glutTimerFunc(ATTACK_ANIM_MSEC, attack_routine, 1);
+		//set to be called again to end after attack msecs have passed
+		glutTimerFunc(ATTACK_ANIM_MSEC, attack_routine, 1); 
 	}
 	else
 	{
+		//end attack - hide all attack sprites
 		for (int i = 0; i < MAX_MOBS; i++) {
 
 			if (attacks_player[i]) {
@@ -340,12 +421,24 @@ void attack_routine(int value) {
 	}
 }
 
+/*
+* Starts the attack routine.
+*/
 void all_mobs_attack(void) {
 
 	is_mob_attack = 1;
 	attack_routine(0);
 }
 
+/*
+* Pathfinding. Uses heuristic to find best tile to move towards the player. Simply tries to decrease the distance
+* between the two as much as possible. If the tile cannot be stepped on (is water for example) then
+* movement is cancelled.
+* Returns 0 if no action can be performed, returns 1 if movement is performed and returns 2 if attack
+* is performed against the player.
+* dir_out: set to the direction of the movement (if any)
+* i: mob array index
+*/
 int to_player_mob_destination(mob_t *m, int i, int *dir_out) {
 
 	vec2_t dominant_dir;
@@ -363,13 +456,17 @@ int to_player_mob_destination(mob_t *m, int i, int *dir_out) {
 	get_player_pos(&player_pos);
 
 	//find the best tile towards player
+
+	//position differences
 	diff_x = m->sprite[0]->position[VEC_X] - player_pos[VEC_X];
 	diff_y = m->sprite[0]->position[VEC_Y] - player_pos[VEC_Y];
+	//position distances
 	abs_x = fabsf(diff_x);
 	abs_y = fabsf(diff_y);
 
 	Vec2Copy(m->sprite[0]->position, dominant_dir);
 
+	//largest distance wins
 	if (abs_x > abs_y) {
 
 		dominant_dir[VEC_X] += SPRITE_SIZE * 2 * (diff_x > 0 ? -1 : 1);
@@ -382,7 +479,7 @@ int to_player_mob_destination(mob_t *m, int i, int *dir_out) {
 	}
 	else
 	{
-		//both equal
+		//if both distances are equal then both need to be tried (one might be blocked by a wall for example)
 		try_both = 1;
 		Vec2Copy(m->sprite[0]->position, dominant_dir2);
 
@@ -393,7 +490,7 @@ int to_player_mob_destination(mob_t *m, int i, int *dir_out) {
 		rotation2 = diff_y > 0 ? 1 : 3;
 	}
 
-	//check player attack
+	//check if attacks the player (must be close enough)
 	if (Vec2Distance(m->sprite[0]->position, player_pos) <= SPRITE_SIZE * 2) {
 
 		attacks_player[i] = 1;
@@ -408,6 +505,7 @@ int to_player_mob_destination(mob_t *m, int i, int *dir_out) {
 
 		if (!mobs[k].sprite[0]) {
 
+			//inactive mob
 			continue;
 		}
 
@@ -418,6 +516,7 @@ int to_player_mob_destination(mob_t *m, int i, int *dir_out) {
 
 				if (Vec2Distance(dominant_dir2, mobs[k].sprite[0]->position) < SPRITE_SIZE) {
 
+					//also on the second tile
 					return 0;
 				}
 			}
@@ -428,13 +527,14 @@ int to_player_mob_destination(mob_t *m, int i, int *dir_out) {
 			is_first_invalid = 1;
 		}
 
-		//if lerp vector is set and the distance is too small... (another mob will take this tile)
+		//if lerp vector is set and the distance to it is too small... (another mob will take this tile)
 		if (lerp_max_msecs[k] && Vec2Distance(dominant_dir, lerp_ends[k]) < SPRITE_SIZE) {
 
 			if (try_both) {
 
 				if (lerp_max_msecs[k] && Vec2Distance(dominant_dir2, lerp_ends[k]) < SPRITE_SIZE) {
 
+					//both will be taken
 					return 0;
 				}
 			}
@@ -473,7 +573,7 @@ int to_player_mob_destination(mob_t *m, int i, int *dir_out) {
 		}
 	}
 
-	if (s->collision_mask & COLLISION_FLOOR) {
+	if (s->collision_mask & COLLISION_FLOOR) { //is target a floor?
 
 		//walk here
 
@@ -488,7 +588,7 @@ int to_player_mob_destination(mob_t *m, int i, int *dir_out) {
 
 		return 1;
 	}
-	else if (try_both && s2 && s2->collision_mask & COLLISION_FLOOR) {
+	else if (try_both && s2 && s2->collision_mask & COLLISION_FLOOR) { //is the second target a flooor?
 
 		//or here
 		Vec2Copy(m->sprite[0]->position, lerp_starts[i]);
@@ -501,12 +601,18 @@ int to_player_mob_destination(mob_t *m, int i, int *dir_out) {
 
 		return 1;
 	}
-	d_printf(LOG_TEXT, "%s: not floor\n", __func__);
-
+	//nowhere to go
 	return 0;
 }
 
-//1 if moves, 2 if attacks
+/*
+* Pathfinding. Finds a random direction for a mob to move to. First finds all available targets, then randomly
+* picks one of them if there is any.
+* Returns 0 if no action can be performed, returns 1 if movement is performed and returns 2 if attack
+* is performed against the player.
+* dir_out: set to the direction of the movement (if any)
+* i: mob array index
+*/
 int random_mob_destination(mob_t *m, int i, int *rand_out) {
 
 	vec2_t vtemp;
@@ -520,14 +626,16 @@ int random_mob_destination(mob_t *m, int i, int *rand_out) {
 	no_angles = 1;
 	memset(&available_angles, 0, sizeof(int) * 4);
 
+	//check all directions
 	for (j = 0; j < 4; j++) {
 
 		Vec2Copy(m->sprite[0]->position, vtemp);
 
+		//add direction unit vector to vtemp
 		vtemp[VEC_X] += (SPRITE_SIZE * 2 * !(j & 1)) * (j > 0 ? -1 : 1);
 		vtemp[VEC_Y] += (SPRITE_SIZE * 2 * (j & 1)) * (j > 1 ? 1 : -1);
 
-		//check if blocked by player
+		//check attacks the player at this angle
 		if (Vec2Distance(vtemp, player_pos) < SPRITE_SIZE) {
 
 			attacks_player[i] = 1;
@@ -543,6 +651,7 @@ int random_mob_destination(mob_t *m, int i, int *rand_out) {
 
 			if (!mobs[k].sprite[0]) {
 
+				//mob inactive
 				continue;
 			}
 
@@ -570,6 +679,7 @@ int random_mob_destination(mob_t *m, int i, int *rand_out) {
 		}
 		if (s->collision_mask & COLLISION_FLOOR) {
 
+			//this tile is available
 			available_angles[j] = 1;
 			no_angles = 0;
 		}
@@ -589,7 +699,7 @@ int random_mob_destination(mob_t *m, int i, int *rand_out) {
 		random = Random(0, 3);
 	} while (!available_angles[random]);
 
-	//calculate lerp
+	//calculate lerp data
 	Vec2Copy(m->sprite[0]->position, lerp_starts[i]);
 	Vec2Copy(m->sprite[0]->position, lerp_ends[i]);
 
@@ -601,14 +711,16 @@ int random_mob_destination(mob_t *m, int i, int *rand_out) {
 	return 1;
 }
 
-//FIXME: this is a mess
+/*
+* Determines behaviour of each active mob.
+*/
 void calculate_mob_destinations(void) {
 
 	int current, i;
-	int random = 0;
+	int direction = 0;
 	int any_attacks = 0;
 
-	//clear all arrays
+	//clear all behaviour arrays
 	memset(&lerp_starts, 0, sizeof(vec2_t) * MAX_MOBS);
 	memset(&lerp_ends, 0, sizeof(vec2_t) * MAX_MOBS);
 	memset(&lerp_msecs, 0, sizeof(int) * MAX_MOBS);
@@ -617,8 +729,8 @@ void calculate_mob_destinations(void) {
 
 	for (i = 0; i < MAX_MOBS; i++) {
 
-		if (!mobs[i].sprite[0] || !mobs[i].sprite[1]|| !mobs[i].sprite[2]
-			|| (mobs[i].sprite[0]->skip_render == 1 &&
+		if (!mobs[i].sprite[0] || !mobs[i].sprite[1]|| !mobs[i].sprite[2]	//no sprite?
+			|| (mobs[i].sprite[0]->skip_render == 1 &&						//inactive?
 			mobs[i].sprite[1]->skip_render == 1 && 
 			mobs[i].sprite[2]->skip_render == 1)) {
 
@@ -628,11 +740,13 @@ void calculate_mob_destinations(void) {
 
 		if (mobs[i].type == MAP_MOB_SLIME) {
 
-			current = random_mob_destination(&mobs[i], i, &random);
+			//slime moves randomly
+			current = random_mob_destination(&mobs[i], i, &direction);
 		}
 		else
 		{
-			current = to_player_mob_destination(&mobs[i], i, &random);
+			//goblin follows the player
+			current = to_player_mob_destination(&mobs[i], i, &direction);
 		}
 
 		if (current == 2) { //2 == attack
@@ -645,31 +759,32 @@ void calculate_mob_destinations(void) {
 			continue;
 		}
 
-		//make mobs move faster than the player (slow movement ruins the game flow...)
+		//make mobs move faster than the player (slow movement ruins the game "dynamics"...)
 		lerp_max_msecs[i] = (int)((1000 / (MOVE_SPEED * 8)) * SPRITE_SIZE * 2);
 
 		//make mob look at the direction
-		mob_look_at_rotation(&mobs[i], random);
+		mob_look_at_rotation(&mobs[i], direction);
 	}
 
-	//attack
+	//start attacks
 	if (any_attacks) {
 
 		all_mobs_attack();
 
 	}
 
-	//start lerp routine wait
+	//start waiting for attacks to end in order to perform move
 	glutTimerFunc(TICK_MSEC, lerp_mobs_wait_for_attack, 0);
 }
 
+/*
+* Callback that waits for player movement to end. After that happens it starts mob behaviours calculation.
+*/
 void wait_for_player(int value) {
 
-	UNUSED_VARIABLE(value);
+	if (is_player_move) { //still moving, wait anoher tick
 
-	if (is_player_move) {
-
-		glutTimerFunc(TICK_MSEC, wait_for_player, 0);
+		glutTimerFunc(TICK_MSEC, wait_for_player, value);
 	}
 	else
 	{
@@ -677,6 +792,9 @@ void wait_for_player(int value) {
 	}
 }
 
+/*
+* Starts mobs' turn. Executed after player movement starts.
+*/
 void mobs_move(void) {
 
 	is_mob_move = 1;
@@ -684,6 +802,9 @@ void mobs_move(void) {
 	glutTimerFunc(TICK_MSEC, wait_for_player, 0);
 }
 
+/*
+* Calculates damage received by the mob and triggers a kill if necessary.
+*/
 void mob_receive_damage(mob_t *mob, int damage) {
 
 	int armor_diff;

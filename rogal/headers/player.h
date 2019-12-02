@@ -4,12 +4,12 @@
 #define MAX_ARMOR			20
 
 typedef struct {
-	player_stats_t stats;
+	player_stats_t	stats;
 
-	int look_direction;
-	sprite_t *sprite[3];
+	int				look_direction;
+	sprite_t		*sprite[3];
 
-	item_t *weapon;
+	item_t			*weapon;
 } player_t;
 
 extern player_t player;
