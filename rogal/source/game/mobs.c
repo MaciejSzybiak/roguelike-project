@@ -573,7 +573,7 @@ int to_player_mob_destination(mob_t *m, int i, int *dir_out) {
 		}
 	}
 
-	if (s->collision_mask & COLLISION_FLOOR) { //is target a floor?
+	if ((s->collision_mask & COLLISION_FLOOR) && !is_first_invalid) { //is target a floor?
 
 		//walk here
 
