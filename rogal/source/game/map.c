@@ -300,7 +300,7 @@ void fix_doors(void) {
 
 void remove_some_doors(void) {
 
-	int total = (int)(door_count * 0.4f);
+	int total = (int)(door_count * 0.6f);
 	int count = 0;
 	int x, y;
 
