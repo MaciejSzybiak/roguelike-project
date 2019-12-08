@@ -42,7 +42,7 @@ void draw_particles(int layer) {
 
 	while (current) {
 
-		if (current->render_layer == layer) {
+		if (current->render_layer == layer && current->visibility == VIS_VISIBLE) {
 
 			draw_particle(current);
 		}

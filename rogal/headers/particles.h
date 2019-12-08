@@ -19,6 +19,8 @@ typedef struct particle {
 
 	int			render_layer;	//sorting layer for the renderer
 
+	int			visibility;		//on-off
+
 	//"one way" linked list
 	struct particle *next;
 } particle_t;

@@ -42,6 +42,13 @@
 #define M_PI 3.14159265358979323846
 #endif
 
+//rounding
+inline int r_roundf(float number)
+{
+	return (number >= 0) ? (int)(number + 0.5) : (int)(number - 0.5);
+}
+
+
 /*---------
 	   TIME
 ---------*/

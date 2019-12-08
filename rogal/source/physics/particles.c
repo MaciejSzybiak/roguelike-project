@@ -16,6 +16,7 @@
 */
 
 #include "particles.h"
+#include "game.h"
 #include <string.h>
 
 static particle_t *first_particle;
@@ -58,6 +59,7 @@ particle_t *new_particle(void) {
 
 		current->next = p;
 	}
+	p->visibility = 1;
 	return p;
 }
 
@@ -151,6 +153,8 @@ void run_particles(int msec) {
 	particle_t *current = first_particle;
 	vec2_t end;
 	float time = msec * 0.001f; //frametime
+	int x, y;
+	sprite_t *s;
 
 	//noting to simulate
 	if (!first_particle) {
@@ -206,6 +210,20 @@ void run_particles(int msec) {
 		//calculate new position using lerp
 		Vec2Add(current->position, current->velocity, end); //movement done in 1 sec (position + velocity vector)
 		Vec2Lerp(current->position, end, time, current->position); //move by time fraction
+
+		//set visibility
+		x = r_roundf(current->position[VEC_X]);
+		y = r_roundf(current->position[VEC_Y]);
+
+		s = sprite_map[x + MAP_OFFSET][y + MAP_OFFSET];
+		if (s) {
+
+			current->visibility = sprite_map[x + MAP_OFFSET][y + MAP_OFFSET]->visibility;
+		}
+		else
+		{
+			current->visibility = 0;
+		}
 
 		current = current->next;
 	}
