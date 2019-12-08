@@ -283,6 +283,8 @@ typedef enum {
 	ICON_ARMOR,
 	ICON_HP,
 
+	MOB_UI_BG,
+
 	SHIELD,
 	SWORD,
 	POTION_HP,

@@ -20,33 +20,47 @@ void set_sprite_invisible(sprite_t *s) {
 
 void set_mob_visibility(mob_t *mob, int vis) {
 
-	sprite_t *s;
+	switch (vis) 
+	{
+		case VIS_DISCOVERED:
+		case VIS_HIDDEN:
+			for (int i = 0; i < 3; i++) {
 
-	for (int i = 0; i < 3; i++) {
+				mob->sprite[i]->skip_render = 1; //don't render this mob
+			}
+			//hide texts
+			if (mob->health_text) {
 
-		s = mob->sprite[i];
+				hide_text(mob->health_text);
+			}
+			if (mob->armor_text) {
 
-		if (!s) {
+				hide_text(mob->armor_text);
+			}
+			//hide text background
+			if (mob->text_background) {
 
-			continue;
-		}
+				mob->text_background->skip_render = 1;
+			}
+			break;
+		default:
+			//visible
+			mob->sprite[mob->look_direction]->skip_render = 0;
+			//enable texts
+			if (mob->health_text) {
 
-		s->visibility = vis;
-		
-		switch (vis)
-		{
-			case VIS_DISCOVERED: //not really valid for a mob
-			case VIS_HIDDEN:
-				s->skip_render = 1; //don't render this mob
-				break;
-			default:
-				//visible
-				if (mob->look_direction == i) {
+				enable_text(mob->health_text);
+			}
+			if (mob->armor_text) {
 
-					s->skip_render = 0;
-				}
-				break;
-		}
+				enable_text(mob->armor_text);
+			}
+			//enable text background
+			if (mob->text_background) {
+
+				mob->text_background->skip_render = 0;
+			}
+			break;
 	}
 }
 

@@ -37,6 +37,8 @@ static const texentry_t texture_names[] = {
 	{ ICON_ARMOR	, "resources/textures/armor_icon.png"		, 1		, DEFAULT_ANIM_MSEC		, RENDER_LAYER_UI },
 	{ ICON_HP		, "resources/textures/health_icon.png"		, 1		, DEFAULT_ANIM_MSEC		, RENDER_LAYER_UI },
 
+	{ MOB_UI_BG		, "resources/textures/mob_ui_bg.png"		, 1		, DEFAULT_ANIM_MSEC		, RENDER_LAYER_EFFECT },
+
 	{ ROCK			, "resources/textures/rock.png"				, 1		, DEFAULT_ANIM_MSEC		, RENDER_LAYER_FLOOR },
 	{ WALL			, "resources/textures/wall.png"				, 1		, DEFAULT_ANIM_MSEC		, RENDER_LAYER_WALL },
 	{ WATER			, "resources/textures/water1.png"			, 8		, DEFAULT_ANIM_MSEC		, RENDER_LAYER_FLOOR },

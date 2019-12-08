@@ -200,8 +200,9 @@ void set_text(text_t *t, char *string) {
 
 	free_text_sprites(t);
 
-	t->text = string;
 	t->length = strlen(string);
+	t->text = malloc(t->length * sizeof(char));
+	memcpy(t->text, string, t->length * sizeof(char));
 
 	set_text_sprites(t);
 }

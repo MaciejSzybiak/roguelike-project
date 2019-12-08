@@ -14,6 +14,13 @@
 #include <string.h>
 #include <GL/glut.h>
 
+#define TEXT_XOFFS 0.35f
+#define TEXT_YOFFS 0.35f
+#define TEXT_SCALE 0.25f
+
+#define TEXT_BG_XSCALE ((TEXT_SCALE))
+#define TEXT_BG_YSCALE (TEXT_BG_XSCALE * 2)
+
 int		is_mob_move = 0;					//global mob state: if mobs are moving then no inputs are processed
 mob_t	mobs[MAX_MOBS];						//all mobs are kept here
 
@@ -53,6 +60,22 @@ void delete_mob(mob_t *mob) {
 		delete_sprite(mob->attack_sprite);
 	}
 
+	//delete texts
+	if (mob->health_text) {
+
+		delete_text(mob->health_text);
+	}
+	if (mob->armor_text) {
+
+		delete_text(mob->armor_text);
+	}
+
+	//delete text background
+	if (mob->text_background) {
+
+		delete_sprite(mob->text_background);
+	}
+
 	//wipe the entire structure
 	memset(mob, 0, sizeof(mob_t));
 }
@@ -89,6 +112,57 @@ int alive_mobs_count(void) {
 		}
 	}
 	return count;
+}
+
+/*
+* Updates mob stat texts.
+*/
+void mob_update_texts(mob_t *mob) {
+
+	char text[4];
+	int x_mult = 1;
+	int len;
+
+	if (mob->health_text) {
+
+		memset(text, 0, 4 * sizeof(char));
+		snprintf(text, 4, "%d", mob->stats.health);
+
+		Vec2Copy(mob->sprite[0]->position, mob->health_text->position);
+		mob->health_text->position[VEC_X] += TEXT_XOFFS;
+		mob->health_text->position[VEC_Y] -= TEXT_YOFFS - TEXT_SCALE;
+
+		x_mult = strlen(text);
+
+		set_text(mob->health_text, text);
+	}
+
+	if (mob->armor_text) {
+
+		memset(text, 0, 4 * sizeof(char));
+		snprintf(text, 4, "%d", mob->stats.armor);
+
+		Vec2Copy(mob->sprite[0]->position, mob->armor_text->position);
+		mob->armor_text->position[VEC_X] += TEXT_XOFFS;
+		mob->armor_text->position[VEC_Y] -= TEXT_YOFFS;
+
+		len = strlen(text);
+		if (len > x_mult) {
+
+			x_mult = len;
+		}
+
+		set_text(mob->armor_text, text);
+	}
+
+	if (mob->text_background) {
+
+		//set background scale and position
+		Vec2Lerp(mob->armor_text->position, mob->health_text->position, 0.6f, mob->text_background->position);
+
+		mob->text_background->scale_x = TEXT_BG_XSCALE * x_mult; //make sure the background grows bigger if any stat is > 10
+		mob->text_background->scale_y = TEXT_BG_YSCALE;
+	}
 }
 
 /*
@@ -187,6 +261,29 @@ void generate_mobs(void) {
 			mob->attack_sprite = s;
 
 			randomize_mob(mob); //set random statistics
+
+			//set statistics texts
+			//health
+			mob->health_text = new_text();
+			mob->health_text->scale = TEXT_SCALE;
+			mob->health_text->render_layer = RENDER_LAYER_ONTOP;
+			Color3UIRed(mob->health_text->color);
+
+			//armor
+			mob->armor_text = new_text();
+			mob->armor_text->scale = TEXT_SCALE;
+			mob->armor_text->render_layer = RENDER_LAYER_ONTOP;
+			Color3UIGreen(mob->armor_text->color);
+
+			//text background
+			mob->text_background = new_sprite();
+			mob->text_background->tex_id = get_texture_id(MOB_UI_BG);
+			mob->text_background->framecount = get_texture_framecount(MOB_UI_BG);
+			mob->text_background->render_layer = get_texture_render_layer(MOB_UI_BG);
+			mob->text_background->frame_msec = get_texture_frametime(MOB_UI_BG);
+			mob->text_background->render_layer = get_texture_render_layer(MOB_UI_BG);
+
+			mob_update_texts(mob);
 		}
 	}
 }
@@ -315,6 +412,9 @@ void lerp_all_mobs(int value) {
 
 			Vec2Copy(v, mobs[i].sprite[j]->position);
 		}
+
+		//update stats texts
+		mob_update_texts(&mobs[i]);
 	}
 
 	if (!all_done) {
@@ -841,5 +941,8 @@ void mob_receive_damage(mob_t *mob, int damage) {
 	{
 		//add blood effect
 		make_blood_particles(mob->sprite[0]->position, mob->sprite[0]->position[VEC_Y] - SPRITE_SIZE + 0.08f);
+
+		//refresh stats texts
+		mob_update_texts(mob);
 	}
 }

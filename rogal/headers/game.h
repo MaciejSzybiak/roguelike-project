@@ -85,6 +85,11 @@ typedef struct mob {
 	int				look_direction;
 
 	player_stats_t	stats;
+
+	//mob stats display
+	text_t			*health_text;
+	text_t			*armor_text;
+	sprite_t		*text_background;
 } mob_t;
 
 extern int is_mob_move;
