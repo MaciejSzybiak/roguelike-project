@@ -43,7 +43,7 @@
 #endif
 
 //rounding
-inline int r_roundf(float number)
+static inline int r_roundf(float number)
 {
 	return (number >= 0) ? (int)(number + 0.5) : (int)(number - 0.5);
 }
