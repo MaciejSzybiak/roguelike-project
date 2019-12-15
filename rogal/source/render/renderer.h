@@ -1,5 +1,6 @@
 #include <GL/glut.h>
 
+//the framerate that the display is refreshed at
 #define DISPLAY_FRAMERATE	60
 
 void render_timer_callback(int value);
