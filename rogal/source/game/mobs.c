@@ -688,6 +688,7 @@ int to_player_mob_destination(mob_t *m, int i, int *dir_out) {
 
 		lerp_ends[i][VEC_X] += (SPRITE_SIZE * 2 * !(rotation & 1)) * (rotation > 0 ? -1 : 1);
 		lerp_ends[i][VEC_Y] += (SPRITE_SIZE * 2 * (rotation & 1)) * (rotation > 1 ? 1 : -1);
+		lerp_max_msecs[i] = 1; //temporary set for other mob checks
 
 		*dir_out = rotation;
 
@@ -701,6 +702,7 @@ int to_player_mob_destination(mob_t *m, int i, int *dir_out) {
 
 		lerp_ends[i][VEC_X] += (SPRITE_SIZE * 2 * !(rotation2 & 1)) * (rotation2 > 0 ? -1 : 1);
 		lerp_ends[i][VEC_Y] += (SPRITE_SIZE * 2 * (rotation2 & 1)) * (rotation2 > 1 ? 1 : -1);
+		lerp_max_msecs[i] = 1; //temporary set for other mob checks
 
 		*dir_out = rotation2;
 
@@ -810,6 +812,7 @@ int random_mob_destination(mob_t *m, int i, int *rand_out) {
 
 	lerp_ends[i][VEC_X] += (SPRITE_SIZE * 2 * !(random & 1)) * (random > 0 ? -1 : 1);
 	lerp_ends[i][VEC_Y] += (SPRITE_SIZE * 2 * (random & 1)) * (random > 1 ? 1 : -1);
+	lerp_max_msecs[i] = 1; //temporary set for other mob checks
 
 	*rand_out = random;
 
