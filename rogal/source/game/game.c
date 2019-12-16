@@ -14,6 +14,8 @@ int is_options = 0;
 int old_frame_msec = 0;
 int frame_msec = 0;
 
+int current_level = 1;
+
 void restart_game(void);
 
 void on_player_action(sprite_t *s, int mouse_key) {
@@ -294,6 +296,8 @@ void next_level_action(sprite_t *s) {
 	init_mobs();
 	init_items();
 
+	current_level++;
+
 	player_next_level();
 }
 
@@ -314,7 +318,14 @@ void restart_game(void) {
 	is_player_dead = 0;
 	init_player();
 
+	current_level = 1;
+
 	set_camera_position(v);
+}
+
+int get_current_level(void) {
+
+	return current_level;
 }
 
 void init_game(void) {

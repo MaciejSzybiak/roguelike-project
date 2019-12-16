@@ -1,7 +1,7 @@
 #include "shared.h"
 #include "game.h"
 
-#define MAX_ARMOR			20
+#define MAX_ARMOR	5
 
 typedef struct {
 	player_stats_t	stats;

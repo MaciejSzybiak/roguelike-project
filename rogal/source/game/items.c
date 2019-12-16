@@ -2,14 +2,30 @@
 #include "player.h"
 #include <string.h>
 
-#define MIN_HEALTH_VAL	2
-#define MAX_HEALTH_VAL	7
+//base item values
+#define MIN_HEALTH_VAL	1
+#define MAX_HEALTH_VAL	2
 
-#define MIN_ARMOR_VAL	2
-#define MAX_ARMOR_VAL	5
+#define MIN_ARMOR_VAL	1
+#define MAX_ARMOR_VAL	3
 
 #define MIN_WEAPON_VAL	2
-#define MAX_WEAPON_VAL	7
+#define MAX_WEAPON_VAL	3
+
+//rarity values
+#define RARITY_UNCOMMON 4
+#define RARITY_RARE		8
+#define RARITY_VRARE	16
+
+//current item values
+static int min_health = MIN_HEALTH_VAL;
+static int max_health = MAX_HEALTH_VAL;
+
+static int min_armor = MIN_ARMOR_VAL;
+static int max_armor = MAX_ARMOR_VAL;
+
+static int min_weapon = MIN_WEAPON_VAL;
+static int max_weapon = MAX_WEAPON_VAL;
 
 item_t map_items[MAX_ITEMS + 1];
 
@@ -69,28 +85,25 @@ void randomize_item(item_t *item) {
 	switch (item->item_category)
 	{
 		case ITEM_CATEGORY_ARMOR:
-			value = Random(MIN_ARMOR_VAL, MAX_ARMOR_VAL);
-			rarity = (float)value / MAX_ARMOR_VAL;
+			value = Random(min_armor, max_armor);
 			break;
 		case ITEM_CATEGORY_HEALTH:
-			value = Random(MIN_HEALTH_VAL, MAX_HEALTH_VAL);
-			rarity = (float)value / MAX_HEALTH_VAL;
+			value = Random(min_health, max_health);
 			break;
 		case ITEM_CATEGORY_WEAPON:
-			value = Random(MIN_WEAPON_VAL, MAX_WEAPON_VAL);
-			rarity = (float)value / MAX_WEAPON_VAL;
+			value = Random(min_weapon, max_weapon);
 			break;
 	}
 
-	if (rarity > 0.8f) {
+	if (value >= RARITY_VRARE) {
 
 		Color3ItemVeryRare(color);
 	}
-	else if (rarity > 0.5f)
+	else if (value >= RARITY_RARE)
 	{
 		Color3ItemRare(color);
 	}
-	else if (rarity > 0.25f)
+	else if (value >= RARITY_UNCOMMON)
 	{
 		Color3ItemUncommon(color);
 	}
@@ -111,6 +124,13 @@ void generate_items(void) {
 	sprite_t *s;
 	int category = 0;
 	void (*action)(sprite_t *s);
+
+	//calculate boundaries for the current level
+	int current_level = get_current_level();
+	max_health = MAX_HEALTH_VAL + current_level / 2;
+	max_armor = MAX_ARMOR_VAL + current_level / 2;
+	min_weapon = MIN_WEAPON_VAL + current_level / 4;
+	max_weapon = MAX_WEAPON_VAL + current_level / 3;
 
 	for (int x = 0; x < MAP_SIZE; x++) {
 		for (int y = 0; y < MAP_SIZE; y++) {

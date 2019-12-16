@@ -170,9 +170,14 @@ void mob_update_texts(mob_t *mob) {
 */
 void randomize_mob(mob_t *mob) {
 
-	mob->stats.health = mob->stats.max_health = MIN_MOB_HEALTH + rand() % (MAX_MOB_HEALTH + 1);
-	mob->stats.armor = MIN_MOB_ARMOR + rand() % (MAX_MOB_ARMOR + 1);
-	mob->stats.attack_damage = MIN_MOB_DAMAGE + rand() % (MAX_MOB_DAMAGE + 1);
+	int current_level = get_current_level();
+	int min_health = MIN_MOB_HEALTH + current_level / 2;
+	int min_armor = MIN_MOB_ARMOR;
+	int min_damage = MIN_MOB_DAMAGE;
+
+	mob->stats.health = mob->stats.max_health = (MIN_MOB_HEALTH + current_level / 2) + rand() % ((MAX_MOB_HEALTH + current_level) - min_health);
+	mob->stats.armor = MIN_MOB_ARMOR + rand() % ((MAX_MOB_ARMOR + current_level / 3) - min_armor);
+	mob->stats.attack_damage = MIN_MOB_DAMAGE + rand() % ((MAX_MOB_DAMAGE + current_level / 2) - min_damage);
 }
 
 /*

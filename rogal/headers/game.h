@@ -29,8 +29,6 @@
 #define TILE_LOCK_DOOR		6
 #define TILE_CHEST			7
 
-#define TILE_INVALID		-1 //FIXME: ???
-
 extern int map_contents[MAP_SIZE][MAP_SIZE]; //for mobs and items (non-tile elements)
 extern sprite_t *sprite_map[MAP_SIZE][MAP_SIZE];
 
@@ -68,11 +66,12 @@ void weapon_pickup_action(sprite_t *s);
 
 #define MAX_MOBS		11 //maximum amount of mobs per level
 
+//base values for mob generation
 #define MIN_MOB_DAMAGE	1
 #define MAX_MOB_DAMAGE	2
 
 #define MIN_MOB_HEALTH	1
-#define MAX_MOB_HEALTH	5
+#define MAX_MOB_HEALTH	3
 
 #define MIN_MOB_ARMOR	0
 #define MAX_MOB_ARMOR	1
@@ -159,6 +158,7 @@ extern int is_options;
 void init_game(void);
 
 void next_level_action(sprite_t *s);
+int get_current_level(void);
 
 /*---------
 	OBJECTS
