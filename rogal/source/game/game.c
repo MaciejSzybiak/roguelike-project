@@ -311,14 +311,14 @@ void restart_game(void) {
 
 	disable_message_text();
 
+	current_level = 1;
+
 	generate_map();
 	init_mobs();
 	init_items();
 
 	is_player_dead = 0;
 	init_player();
-
-	current_level = 1;
 
 	set_camera_position(v);
 }
