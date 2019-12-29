@@ -94,11 +94,17 @@ void offset_camera_position(vec2_t offset) {
 	print_gl_errors(__func__);
 }
 
+/*
+* Returns a pointer to the camera position vector.
+*/
 vec2_t *get_camera_offset(void) {
 
 	return &cam.position;
 }
 
+/*
+* Sets modelview matrix for UI rendering.
+*/
 void set_camera_for_ui(void) {
 
 	vec2_t negative;
@@ -117,20 +123,21 @@ void set_camera_for_ui(void) {
 	print_gl_errors(__func__);
 }
 
+/*
+* Sets modelview matrix back for world rendering.
+*/
 void unset_camera_for_ui(void) {
 
 	//pop back the old matrix
+	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();
 
 	print_gl_errors(__func__);
 }
 
-//FIXME: unused?
-void set_camera_for_world(void) {
-
-	set_camera_position(cam.position);
-}
-
+/*
+* Initializes the camera.
+*/
 void init_camera(void) {
 
 	Vec2Zero(cam.position);

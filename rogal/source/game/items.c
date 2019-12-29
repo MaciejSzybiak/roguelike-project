@@ -1,3 +1,8 @@
+/*
+* This file keeps track of all pickup items and generates them from
+* arrays created by the map generator.
+*/
+
 #include "game.h"
 #include "player.h"
 #include <string.h>
@@ -34,6 +39,9 @@ void weapon_pickup_action(sprite_t *s);
 void armor_pickup_action(sprite_t *s);
 void health_pickup_action(sprite_t *s);
 
+/*
+* Clears the item provided as the parameter.
+*/
 void delete_item(item_t *item) {
 
 	if (!item) {
@@ -50,8 +58,12 @@ void delete_item(item_t *item) {
 	memset(item, 0, sizeof(item_t));
 }
 
+/*
+* Returns an empty item.
+*/
 item_t *new_item(void) {
 
+	//find an empty item
 	for (int i = 0; i < (MAX_ITEMS + 1); i++) {
 
 		if (map_items[i].sprite == NULL) {
@@ -59,10 +71,16 @@ item_t *new_item(void) {
 			return &map_items[i];
 		}
 	}
+
+	//nothing was found, clear and return the last item
 	d_printf(LOG_ERROR, "%s: max items exceeded!\n", __func__);
+	delete_item(&map_items[MAX_ITEMS - 1]);
 	return &map_items[MAX_ITEMS - 1];
 }
 
+/*
+* Finds an item that contains a sprite matching the one passed as the parameter.
+*/
 item_t *find_item_for_sprite(sprite_t *s) {
 
 	for (int i = 0; i < (MAX_ITEMS + 1); i++) {
@@ -76,12 +94,15 @@ item_t *find_item_for_sprite(sprite_t *s) {
 	return NULL;
 }
 
+/*
+* Randomizes an item according to the current min-max bounds.
+*/
 void randomize_item(item_t *item) {
 
 	color3_t color;
 	int value = 0;
-	float rarity = 0.f;
 
+	//get random item value
 	switch (item->item_category)
 	{
 		case ITEM_CATEGORY_ARMOR:
@@ -95,6 +116,7 @@ void randomize_item(item_t *item) {
 			break;
 	}
 
+	//set rarity colour
 	if (value >= RARITY_VRARE) {
 
 		Color3ItemVeryRare(color);
@@ -112,11 +134,15 @@ void randomize_item(item_t *item) {
 		Color3ItemCommon(color);
 	}
 
+	//apply values to the item
 	item->modifier_value = value;
 	Color3Copy(color, item->sprite->color);
 	Color3Copy(color, item->rarity_color);
 }
 
+/*
+* Generates map items from the map contents array.
+*/
 void generate_items(void) {
 
 	texname tname;
@@ -132,10 +158,13 @@ void generate_items(void) {
 	min_weapon = MIN_WEAPON_VAL + current_level / 4;
 	max_weapon = MAX_WEAPON_VAL + current_level / 3;
 
+	//check all contents
 	for (int x = 0; x < MAP_SIZE; x++) {
 		for (int y = 0; y < MAP_SIZE; y++) {
 
 			action = NULL;
+
+			//set the correct item properties
 			switch (map_contents[x][y])
 			{
 				case MAP_ITEM_SHIELD:
@@ -158,6 +187,7 @@ void generate_items(void) {
 					continue;
 			}
 
+			//get a new item
 			item = new_item();
 			item->item_type = map_contents[x][y];
 			item->item_category = category;
@@ -176,6 +206,7 @@ void generate_items(void) {
 			s->animation_pause = 0;
 			s->skip_render = 0;
 
+			//set item action
 			if (action) {
 
 				s->action = action;
@@ -183,13 +214,18 @@ void generate_items(void) {
 
 			item->sprite = s;
 
+			//randomize the item value
 			randomize_item(item);
 		}
 	}
 }
 
+/*
+* Initializes items.
+*/
 void init_items(void) {
 
+	//clear all items but player's current weapon
 	for (int i = 0; i < MAX_ITEMS + 1; i++) {
 
 		if (map_items[i].sprite) {
@@ -201,24 +237,29 @@ void init_items(void) {
 			}
 
 			delete_item(&map_items[i]);
-			memset(&map_items[i], 0, sizeof(item_t));
 		}
 	}
 
-	//memset(&map_items, 0, sizeof(item_t) * (MAX_ITEMS + 1));
+	//make new items
 	generate_items();
 }
 
 //ACTIONS
 
+/*
+* Executed when a weapon is picked up.
+*/
 void weapon_pickup_action(sprite_t *s) {
 
+	//find the item
 	item_t *item = find_item_for_sprite(s);
 
 	d_printf(LOG_TEXT, "%s\n", __func__);
 
 	if (!item) {
 
+		//nothing found?
+		d_printf(LOG_WARNING, "%s: no item found.\n", __func__);
 		return;
 	}
 
@@ -232,6 +273,9 @@ void weapon_pickup_action(sprite_t *s) {
 	player_pickup_weapon(item);
 }
 
+/*
+* Executed when armor is picked up.
+*/
 void armor_pickup_action(sprite_t *s) {
 
 	item_t *item = find_item_for_sprite(s);
@@ -243,10 +287,14 @@ void armor_pickup_action(sprite_t *s) {
 		return;
 	}
 
+	//add armor to player's stats and delete the item
 	add_armor(item->modifier_value);
 	delete_item(item);
 }
 
+/*
+* Executed when a health item is picked up.
+*/
 void health_pickup_action(sprite_t *s) {
 
 	item_t *item = find_item_for_sprite(s);
@@ -258,6 +306,7 @@ void health_pickup_action(sprite_t *s) {
 		return;
 	}
 
+	//add health to player's stats and delete the item
 	add_health(item->modifier_value);
 	delete_item(item);
 }

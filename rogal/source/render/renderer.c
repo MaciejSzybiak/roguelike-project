@@ -101,9 +101,6 @@ float uv_offset_for_sprite(float framestep, int current_frame) {
 */
 void draw_sprite(sprite_t *s) {
 
-	//TODO: culling could be performed either here or when the camera is transformed.
-	//is it worth doing? Each quad needs a camera bounds test and it might be cheaper to just draw it.
-
 	//position
 	float x = s->position[VEC_X];
 	float y = s->position[VEC_Y];

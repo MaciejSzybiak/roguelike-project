@@ -633,7 +633,6 @@ void make_exit(void) {
 	int current = 0;
 	int i, x, y;
 
-	//FIXME: low success ratio
 	for (i = 0; i < 15000; i++) {
 
 		current = 0;

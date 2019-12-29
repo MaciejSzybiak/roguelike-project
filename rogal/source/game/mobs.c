@@ -95,7 +95,10 @@ mob_t *new_mob(void) {
 	}
 	//array end
 	d_printf(LOG_ERROR, "%s: max mobs exceeded!\n", __func__);
-	return &mobs[MAX_MOBS - 1]; //FIXME: this might memleak sprite references!
+
+	//clear and return the last mob
+	delete_mob(&mobs[MAX_MOBS - 1]);
+	return &mobs[MAX_MOBS - 1];
 }
 
 /*
@@ -472,7 +475,6 @@ void attack_routine(int value) {
 			if (attacks_player[i]) {
 
 				//show the attack sprite
-
 
 				//set rotation
 				mobs[i].attack_sprite->rotation = LookToRot(mobs[i].look_direction);

@@ -41,7 +41,6 @@ void toggle_main_menu(int enabled) {
 
 		if (enabled) {
 
-			//FIXME: do this only when necessary?
 			if (is_ingame) { //if the menu is shown during a game make the start button say CONTINUE
 
 				set_text(main_menu[0], "CONTINUE");
@@ -124,9 +123,6 @@ void action_play_click(sprite_t *s) {
 void action_options_click(sprite_t *s) {
 
 	UNUSED_VARIABLE(s);
-
-	//TODO
-	d_printf(LOG_INFO, "%s\n", __func__);
 
 	is_options = 1;
 

@@ -1,7 +1,19 @@
+/*
+* This file contains functions that recalculate sprite, item and mob visibility.
+* When visibility is set a color is applied to the required sprites.
+* 
+* Every world sprite can be either hidden, discovered or visible. Hidden sprites
+* are completely disabled and the player is not able to see them. Discovered sprites
+* are darkened but mobs standing on them are not visible to the player.
+*/
+
 #include "game.h"
 #include "player.h"
 #include "raycast.h"
 
+/*
+* Sets the correct invisibility mode to a sprite.
+*/
 void set_sprite_invisible(sprite_t *s) {
 
 	if (s->visibility != VIS_HIDDEN) {
@@ -18,6 +30,9 @@ void set_sprite_invisible(sprite_t *s) {
 	}
 }
 
+/*
+* Sets mob's sprites and texts according to the visibility value.
+*/
 void set_mob_visibility(mob_t *mob, int vis) {
 
 	switch (vis) 
@@ -64,6 +79,10 @@ void set_mob_visibility(mob_t *mob, int vis) {
 	}
 }
 
+/*
+* Determines visiblity of all items. Items have their rarity colour
+* applied when visible.
+*/
 void recalculate_item_visibility(void) {
 
 	item_t *item;
@@ -91,7 +110,7 @@ void recalculate_item_visibility(void) {
 		}
 		else {
 
-			//check if mob visibility is broken by a sprite
+			//check if item visibility is broken by a sprite
 			intersects = 1;
 			for (int i = 0; i < 4; i++) {
 
@@ -119,6 +138,9 @@ void recalculate_item_visibility(void) {
 	}
 }
 
+/*
+* Determines visiblity of all mobs. Mobs can only be visible or hidden.
+*/
 void recalculate_mob_visibility(void) {
 
 	mob_t *mob;
@@ -169,7 +191,9 @@ void recalculate_mob_visibility(void) {
 	}
 }
 
-//checks which tiles are currently visible and sets an apropriate color to them
+/*
+* Checks which world sprites are currently visible and sets an apropriate colour to them.
+*/
 void recalculate_sprites_visibility(void) {
 
 	vec2_t p;
@@ -184,13 +208,6 @@ void recalculate_sprites_visibility(void) {
 			s = sprite_map[x][y];
 
 			if (s) {
-
-				//act only on these objects
-				/*if (s->render_layer != RENDER_LAYER_WALL && s->render_layer != RENDER_LAYER_FLOOR && s->render_layer != RENDER_LAYER_ITEM) {
-
-					continue;
-				}*/
-
 				//calculate the distance between player and the sprite
 				dist = Vec2Distance(player.sprite[0]->position, s->position);
 

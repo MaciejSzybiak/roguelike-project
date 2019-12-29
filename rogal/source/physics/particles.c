@@ -360,7 +360,7 @@ void make_death_particles(vec2_t position) {
 		color_variation = 1.f / Random(5, 10);
 
 		//position
-		offs_x = Random(-2, 2) * 0.01f; //TODO: make this area circular rather than rectangular
+		offs_x = Random(-2, 2) * 0.01f;
 		offs_y = Random(0, 2) * 0.01f;
 
 		//make the particle

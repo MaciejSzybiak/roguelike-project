@@ -37,11 +37,6 @@
 #define max(a,b) (((a) > (b)) ? (a) : (b))
 #define min(a,b) (((a) < (b)) ? (a) : (b))
 
-//no definition for M_PI on some systems (windows?)
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
-
 //rounding
 static inline int r_roundf(float number)
 {
@@ -65,9 +60,6 @@ extern int frame_msec;
 /*---------
 	   MATH
 ---------*/
-
-#define Deg2Rad(deg) ((deg) * (float)M_PI / 180.f) //TODO: evaluate if this is needed
-#define Rad2Deg(rad) ((rad) * 180.f / (float)M_PI)
 
 //clamps
 #define r_clamp(in, min_val, max_val) ((in) < (min_val)) ? (min_val) : (((in) > (max_val)) ? (max_val) : (in))
@@ -110,20 +102,12 @@ typedef double	mat4_t[16];	//4x4 matrix
 //distance between two vectors
 #define Vec2Distance(in1, in2) (sqrtf(Vec2DistanceSquared(in1, in2)))
 
-//TODO: evaluate if still needed
-//sets in to positive values
-#define Vec2Abs(in) ((in)[VEC_X] = (float)fabs((in)[VEC_X]), (in)[VEC_Y] = (float)fabs((in)[VEC_Y]))
-
 //finds a point factor% from start to end
 #define Vec2Lerp(start, end, factor, out)  ((out)[VEC_X] = (start)[VEC_X] + (factor) * ((end)[VEC_X] - (start)[VEC_X]), \
 											(out)[VEC_Y] = (start)[VEC_Y] + (factor) * ((end)[VEC_Y] - (start)[VEC_Y]))
 
 //returns 1 if two vectors are identical
 #define Vec2Compare(in1, in2) ((in1)[VEC_X] == (in2)[VEC_X] && (in1)[VEC_Y] == (in2)[VEC_Y])
-
-//TODO: evaluate if still needed
-//dot product
-#define Vec2Dot(in1, in2) ((in1)[VEC_X] * (in2)[VEC_X] + (in1)[VEC_Y] * (in2)[VEC_Y])
 
 /*---------
 	  COLOR
@@ -186,10 +170,10 @@ void out_of_memory_error(const char *caller); //displays a memory error and kill
 #define SPRITE_SIZE		0.5f //sprite side length is SPRITE_SIZE * 2
 
 //sprite rotation
-#define ROTATION_0		0
-#define ROTATION_90		1
-#define ROTATION_180	2
-#define ROTATION_270	3
+#define ROTATION_0		0	//right
+#define ROTATION_90		1	//down
+#define ROTATION_180	2	//left
+#define ROTATION_270	3	//up
 
 typedef struct sprite {
 	//general
@@ -206,7 +190,7 @@ typedef struct sprite {
 	int				skip_render;		//skip rendering this sprite?
 
 	//vis
-	int				visibility;			//TODO: unused var?
+	int				visibility;			//is this sprite visible?
 	
 	//raycast
 	int				collision_mask;		//collision type mask
@@ -251,7 +235,6 @@ typedef struct {
 #define LOOK_LEFT			1
 #define LOOK_UP				2
 
-//FIXME: evaluate if needed
 //look skips down direction, so it needs to be converted into rotations
 #define LookToRot(look) ((look) > 0 ? (look) + 1 : (look)) 
 

@@ -62,7 +62,7 @@ void make_fullscreen(void) {
 
 	window_props.w_width = window_props.width;
 	window_props.w_height = window_props.height;
-	window_props.w_pos_x = glutGet(GLUT_INIT_WINDOW_X); //FIXME: getting current window position here creates an offset
+	window_props.w_pos_x = glutGet(GLUT_INIT_WINDOW_X);
 	window_props.w_pos_y = glutGet(GLUT_INIT_WINDOW_Y);
 	glutFullScreen();
 }

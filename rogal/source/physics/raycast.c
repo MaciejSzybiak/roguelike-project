@@ -192,7 +192,6 @@ int line_line_intersection(vec2_t start1, vec2_t end1, vec2_t start2, vec2_t end
 */
 int sprite_ray_intersection(vec2_t start, vec2_t end, int raycast_mask, vec2_t *point) {
 
-	//FIXME: poor design
 	sprite_t *first = sprite_head();
 	sprite_t *current = first;
 	vec2_t v1, v2, out_p;
