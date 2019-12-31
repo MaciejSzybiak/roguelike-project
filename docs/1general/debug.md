@@ -25,4 +25,4 @@ the console colour is set according to message type and a message prefix is adde
 string is printed.
 
 - Previous article: [Sprites](sprites.md)
-- Next article: [Setting up the game window]()
+- Next article: [Game window](../2opengl/window.md)

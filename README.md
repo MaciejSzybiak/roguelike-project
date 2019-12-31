@@ -39,8 +39,8 @@ For **Linux** make sure the *freeglut3* package is installed on your system.
 - [Debug logging](docs/1general/debug.md)
 
 #### OpenGL setup
-- [Setting up the game window]()
-- [Camera]()
+- [Game window](docs/2opengl/window.md)
+- [Camera](docs/2opengl/camera.md)
 - [Rendering]()
 
 #### Graphics and effects
