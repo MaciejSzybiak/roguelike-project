@@ -93,7 +93,6 @@ int tex_index_for_name(texname name) {
 */
 unsigned int get_texture_id(texname name) {
 
-	//return textures[tex_index_for_name(name)];
 	return textures[tex_index_for_name(name)];
 }
 
@@ -179,6 +178,7 @@ void load_textures(void) {
 		return;
 	}
 
+	//load all texture images and assign texture ids
 	for (i = 0; i < texcount; i++) {
 		
 		textures[i] = load_image(texture_names[i].name);
