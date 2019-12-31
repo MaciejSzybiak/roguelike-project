@@ -30,7 +30,7 @@ static GLuint textures[MAX_TEXTURES];
 //texture entries: all textures used by the game are listed here
 static const texentry_t texture_names[] = {
 
-	//name          file path								frames	frametime				render layer
+	//name          file path									frames	frametime				render layer
 	{ FONT			, "resources/textures/font.png"				, 64	, DEFAULT_ANIM_MSEC		, RENDER_LAYER_UI },
 
 	{ ICON_DMG		, "resources/textures/dmg_icon.png"			, 1		, DEFAULT_ANIM_MSEC		, RENDER_LAYER_UI },
