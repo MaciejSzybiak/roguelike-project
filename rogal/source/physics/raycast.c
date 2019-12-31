@@ -46,7 +46,7 @@ void mouse_to_world_coordinates(int x, int y) {
 	wx = (GLfloat)x;
 	wy = (GLfloat)y;
 
-	//get transformation matrices and depth
+	//get transformation matrices
 	glGetDoublev(GL_MODELVIEW_MATRIX, modelview_mat);
 	glGetDoublev(GL_PROJECTION_MATRIX, projection_mat);
 

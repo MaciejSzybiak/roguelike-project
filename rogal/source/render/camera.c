@@ -45,7 +45,7 @@ vec2_t *viewport_to_world_pos(vec2_t view_pos, int is_ui_space) {
 
 	Vec2Zero(view_to_world_vec);
 
-	//get matrices and depth
+	//get matrices
 	glGetIntegerv(GL_VIEWPORT, viewport);
 
 	glGetDoublev(GL_MODELVIEW_MATRIX, modelview_mat);
