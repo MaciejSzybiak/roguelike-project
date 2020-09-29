@@ -28,37 +28,3 @@ In order to correctly run the game a correct file structure must be mantained: p
 
 If you are using the **Windows** build also place the freeglut.dll file next to the executable.
 For **Linux** make sure the *freeglut3* package is installed on your system.
-
-## Code description
-`This section is incomplete.`
-#### General informations
-- [The main loop and GLUT callbacks](docs/1general/main_loop.md)
-- [Vectors](docs/1general/vectors.md)
-- [Textures](docs/1general/textures.md)
-- [Sprites](docs/1general/sprites.md)
-- [Debug logging](docs/1general/debug.md)
-
-#### OpenGL setup
-- [Game window](docs/2opengl/window.md)
-- [Camera](docs/2opengl/camera.md)
-- [Rendering]()
-
-#### Graphics and effects
-- [Tile visibility]()
-- [Particles]()
-
-#### Game logic
-- [Raycast]()
-- [User inputs]()
-- [Game states]()
-- [Movement animation]()
-- [Enemies]()
-- [Items]()
-- [Interactable objects]()
-- [Player death and game restart]()
-
-#### UI
-- [Text]()
-- [Elements positioning]()
-- [Options]()
-- [Message popup]()
