@@ -5,9 +5,15 @@ STRIP = strip
 #binary name
 BIN = rogal
 #directory to put the build in
-BUILD_DIR = ./linux_build
+BUILD_DIR = ./bin/Linux
+#obj directory
+OBJ_DIR = $(BUILD_DIR)/obj
+#output directory
+OUT_DIR = $(BUILD_DIR)/out
 #include files directory
-IDIR = ./headers
+IDIR = ./rogal/headers
+#resources directory
+RES_DIR = ./rogal/resources
 
 #compiler flags
 CFLAGS = -Wall -Wpedantic -Wextra -I$(IDIR)
@@ -21,32 +27,34 @@ EXEC = @
 ECHO = @echo
 
 #files to compile
-CFILES = $(wildcard source/*.c) 		\
-		 $(wildcard source/game/*.c) 	\
-		 $(wildcard source/physics/*.c) \
-		 $(wildcard source/render/*.c) 	\
-		 $(wildcard source/ui/*.c)		\
+CFILES = $(wildcard rogal/source/*.c)         \
+		 $(wildcard rogal/source/game/*.c)    \
+		 $(wildcard rogal/source/physics/*.c) \
+		 $(wildcard rogal/source/render/*.c)  \
+		 $(wildcard rogal/source/ui/*.c)      \
 
 #object files created from cfiles
-OBJ = $(CFILES:%.c=$(BUILD_DIR)/%.o)
+OBJ = $(CFILES:%.c=$(OBJ_DIR)/%.o)
 
 #dependencies from objects
 DEPS = $(OBJ:%.o=%.d)
 
 #default target
-$(BIN): $(BUILD_DIR)/$(BIN)
+$(BIN): $(OUT_DIR)/$(BIN)
 
 #main target
-$(BUILD_DIR)/$(BIN): $(OBJ)
+$(OUT_DIR)/$(BIN): $(OBJ)
 	$(ECHO) [LINK ] $@
 	$(EXEC) mkdir -p $(@D)
 	$(EXEC) $(CC) $(CFLAGS) $^ -o $@ $(LIBS)
+	$(ECHO) [COPY ]
+	$(EXEC) cp -r $(RES_DIR) $(OUT_DIR)/resources
 	
 #include dependencies
 -include $(DEPS)
 
 #build every c file
-$(BUILD_DIR)/%.o: %.c
+$(OBJ_DIR)/%.o: %.c
 	$(ECHO) [BUILD] $@
 	$(EXEC) mkdir -p $(@D)
 	$(EXEC) $(CC) $(CFLAGS) -MMD -c $< -o $@ $(LIBS)
@@ -57,9 +65,10 @@ $(BUILD_DIR)/%.o: %.c
 #clean files created by make
 clean:
 	$(ECHO) [CLEAN]
-	$(EXEC) rm -f $(BUILD_DIR)/$(BIN) $(OBJ) $(DEPS)
+	$(EXEC) rm -f $(OUT_DIR)/$(BIN) $(OBJ) $(DEPS)
+	$(EXEC) rm -rf $(OBJ_DIR) $(OUT_DIR)
 	
 #strip debugging symbols from the compiled file
 strip: $(BIN)
 	$(ECHO) [STRIP] $^
-	$(EXEC) $(STRIP) $(BUILD_DIR)/$(BIN)
+	$(EXEC) $(STRIP) $(OUT_DIR)/$(BIN)

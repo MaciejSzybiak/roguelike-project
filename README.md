@@ -7,14 +7,12 @@ Its goal is to provide the basic functionality of this game type while keeping i
 
 The game uses the [freeglut library](http://freeglut.sourceforge.net/) for simplified OpenGL implementation and
 the stb_image.h file from [stb library](https://github.com/nothings/stb) for PNG file support.
-A detailed code description links can be found at the bottom of this page.
 
 ## Compiling
 
 #### Windows
-The code includes a VS2017 project file which can be used to easily compile a Windows executable.
-The [freeglut 3.0.0 MSVC Package](https://www.transmissionzero.co.uk/software/freeglut-devel/) is required as an external
-dependency and needs to be set in the project's linker settings (Additional Library Dependencies).
+The code includes a VS2017 project file which can be used to easily compile a Windows executable. All required dependencies are included
+in this repository.
 
 #### Linux
 A Linux executable can be created using the provided Makefile. Compile files can be cleaned using *make clean* target
