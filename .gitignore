@@ -22,6 +22,9 @@ bld/
 [Oo]bj/
 [Ll]og/
 
+# Don't ignore freeglut DLL
+!/freeglut/bin/
+
 # Linux build results
 linux_build/
 *.o
